@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
-import type { Answer } from '../lib/ai';
 import { type HealthData } from '../lib/health';
+import { assembleHealthContext } from '../lib/health-context';
 import { getInitialOrStoredHealthData } from '../lib/health-storage';
 import styles from '../app/ask/ask.module.css';
 import { ScrollReveal, PhysicsInteractive, MagneticButton } from './motion';
@@ -19,7 +19,9 @@ type Message = {
   id: string;
   role: 'user' | 'assistant';
   question?: string;
-  answer?: Answer;
+  answer?: string;
+  citations?: { id: string; title: string; url: string; publisher: string; publishedAt?: string }[];
+  personalized?: boolean;
   timestamp: string;
 };
 
@@ -29,6 +31,7 @@ export default function Ask({ data: initialPropData }: { data?: HealthData }) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState('');
   const [showSearch, setShowSearch] = useState(false);
+  const [personalize, setPersonalize] = useState(false);
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const composerRef = useRef<HTMLDivElement>(null);
@@ -105,7 +108,6 @@ export default function Ask({ data: initialPropData }: { data?: HealthData }) {
       return;
     }
 
-    const currentRecords = getActiveHealthData();
     const messageId = crypto.randomUUID();
     const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
@@ -125,33 +127,44 @@ export default function Ask({ data: initialPropData }: { data?: HealthData }) {
     userJustSubmitted.current = true;
 
     try {
-      const contextLogs = currentRecords.logs.length > 120
-        ? currentRecords.logs.slice(-120)
-        : currentRecords.logs;
+      const currentRecords = personalize ? getActiveHealthData() : undefined;
+      const healthContext = currentRecords
+        ? assembleHealthContext({ ...currentRecords, personalize: true })
+        : undefined;
+      if (personalize && !healthContext) {
+        throw new Error('Your 90-day journal summary could not be prepared. Turn personalization off or try again.');
+      }
 
       const response = await fetch('/api/ask', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           question: rawQuestion,
-          data: {
-            ...currentRecords,
-            logs: contextLogs,
-            personalize: true, // Always personalize based on user's records!
-          },
+          personalize,
+          ...(healthContext ? { health_context: healthContext } : {}),
         }),
-        signal: AbortSignal.timeout(30000),
+        signal: AbortSignal.timeout(60000),
       });
 
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.error || 'The assistant is unavailable. Try again.');
-      if (!Array.isArray(result.answer)) throw new Error('The response could not be read. Try again.');
+      const result: unknown = await response.json().catch(() => null);
+      if (!response.ok) {
+        const errorMessage = result && typeof result === 'object' && 'error' in result && typeof result.error === 'string'
+          ? result.error
+          : 'The assistant is unavailable. Try again.';
+        throw new Error(errorMessage);
+      }
+      if (!result || typeof result !== 'object' || !('answer' in result) || typeof result.answer !== 'string'
+        || !('citations' in result) || !Array.isArray(result.citations)) {
+        throw new Error('The response could not be read. Try again.');
+      }
 
       const assistantMsg: Message = {
         id: `assistant-${messageId}`,
         role: 'assistant',
         question: rawQuestion,
         answer: result.answer,
+        citations: result.citations,
+        personalized: 'personalized' in result && result.personalized === true,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       };
 
@@ -225,7 +238,7 @@ export default function Ask({ data: initialPropData }: { data?: HealthData }) {
                 </button>
                 <div className={styles.statusPill}>
                   <span className={styles.statusDot} aria-hidden="true" />
-                  <span>Personalized with your journal</span>
+                  <span>{personalize ? '90-day journal summary enabled' : 'Journal excluded by default'}</span>
                 </div>
               </div>
             </div>
@@ -289,13 +302,6 @@ export default function Ask({ data: initialPropData }: { data?: HealthData }) {
               );
             }
 
-            // Assistant Message
-            const answerSections = message.answer ?? [];
-            const dataSection = answerSections.find((s) => s.source === 'Your data');
-            const interpretationSection = answerSections.find((s) => s.source === 'AI interpretation');
-            const clinicianSection = answerSections.find((s) => s.source === 'Questions for your clinician');
-            const researchSection = answerSections.find((s) => s.source === 'Research');
-            const tags = interpretationSection?.tags ?? dataSection?.tags ?? [];
             const isLatestAssistant =
               message.role === 'assistant' &&
               idx === messages.map((m) => m.role).lastIndexOf('assistant');
@@ -318,66 +324,28 @@ export default function Ask({ data: initialPropData }: { data?: HealthData }) {
                     <span className={styles.messageTime}>{message.timestamp}</span>
                   </div>
 
-                  {/* Little tags referring to user records pulled */}
-                  {tags && tags.length > 0 && (
-                    <div className={styles.recordsTags} aria-label="Referenced records from your journal">
-                      <span className={styles.tagsLabel}>Referenced records:</span>
-                      <div className={styles.tagsPillList}>
-                        {tags.map((tag) => (
-                          <span key={tag} className={styles.recordTag}>
-                            <span className={styles.recordTagDot} aria-hidden="true" />
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Primary conversational answer */}
-                  {interpretationSection && (
-                    <div className={styles.primaryText}>
-                      {interpretationSection.text.split('\n\n').map((paragraph, pIdx) => {
-                        if (paragraph.includes('• ')) {
-                          const lines = paragraph.split('\n').filter(Boolean);
-                          const intro = lines.find((l) => !l.startsWith('• '));
-                          const items = lines.filter((l) => l.startsWith('• '));
-                          return (
-                            <div key={pIdx} className={styles.paragraphBlock}>
-                              {intro && <p>{intro}</p>}
-                              <ul className={styles.bulletList}>
-                                {items.map((item, itemIdx) => (
-                                  <li key={itemIdx}>{item.replace(/^•\s*/, '')}</li>
-                                ))}
-                              </ul>
-                            </div>
-                          );
-                        }
-                        return <p key={pIdx}>{paragraph}</p>;
-                      })}
-                    </div>
-                  )}
-
-                  {/* Clinician Question (only if user asked for doctor questions) */}
-                  {clinicianSection && clinicianSection.text && (
-                    <div className={styles.doctorCard}>
-                      <div className={styles.doctorCardHeader}>
-                        <svg className={styles.doctorIcon} viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                        </svg>
-                        <span className={styles.doctorCardTitle}>Question to bring to your clinician</span>
-                      </div>
-                      <p className={styles.doctorQuestionText}>&ldquo;{clinicianSection.text}&rdquo;</p>
-                    </div>
-                  )}
+                  <div className={styles.primaryText}>
+                    {(message.answer ?? '').split(/\n{2,}/).filter(Boolean).map((paragraph, paragraphIndex) => {
+                      const lines = paragraph.split('\n').filter(Boolean);
+                      const listItems = lines.filter((line) => /^\s*(?:[-*•])\s+/.test(line));
+                      if (listItems.length === lines.length && listItems.length > 0) {
+                        return (
+                          <ul key={paragraphIndex} className={styles.bulletList}>
+                            {listItems.map((item, itemIndex) => <li key={itemIndex}>{item.replace(/^\s*(?:[-*•])\s+/, '')}</li>)}
+                          </ul>
+                        );
+                      }
+                      return <p key={paragraphIndex}>{paragraph}</p>;
+                    })}
+                  </div>
 
                   {/* Research Citations */}
-                  {researchSection && researchSection.citations && researchSection.citations.length > 0 && (
+                  {message.citations && message.citations.length > 0 && (
                     <div className={styles.researchSection}>
-                      <span className={styles.researchLabel}>Clinical references:</span>
+                      <span className={styles.researchLabel}>Research sources</span>
                       <div className={styles.citationsList}>
-                        {researchSection.citations.map((citation) => (
+                        {message.citations.map((citation) => (
                           <div key={citation.id} className={styles.citationCard}>
-                            <p className={styles.citationExcerpt}>&ldquo;{citation.excerpt}&rdquo;</p>
                             <div className={styles.citationMeta}>
                               {/^(https?):\/\//.test(citation.url) ? (
                                 <a href={citation.url} target="_blank" rel="noopener noreferrer" className={styles.citationLink}>
@@ -386,7 +354,9 @@ export default function Ask({ data: initialPropData }: { data?: HealthData }) {
                               ) : (
                                 <span className={styles.citationTitle}>{citation.title}</span>
                               )}
-                              <span className={styles.citationPublisher}>{citation.publisher}</span>
+                              <span className={styles.citationPublisher}>
+                                {[citation.publisher, citation.publishedAt].filter(Boolean).join(' · ')}
+                              </span>
                             </div>
                           </div>
                         ))}
@@ -395,7 +365,8 @@ export default function Ask({ data: initialPropData }: { data?: HealthData }) {
                   )}
 
                   <div className={styles.metaDisclaimer}>
-                    Development assistant response · For reflection and doctor prep, not diagnosis.
+                    {message.personalized ? 'Included your 90-day journal summary · ' : 'Answered without journal data · '}
+                    For reflection and appointment preparation, not diagnosis.
                   </div>
                 </div>
               </div>
@@ -416,7 +387,7 @@ export default function Ask({ data: initialPropData }: { data?: HealthData }) {
                   <span />
                   <span />
                 </div>
-                <span className={styles.thinkingText}>Reviewing your journal records & clinical context…</span>
+                <span className={styles.thinkingText}>Searching research and preparing a response…</span>
               </div>
             </div>
           )}
@@ -426,6 +397,21 @@ export default function Ask({ data: initialPropData }: { data?: HealthData }) {
         {/* Bottom Sticky Prompt Box */}
         <div ref={composerRef} className={styles.bottomComposerArea}>
           <form className={styles.composerForm} onSubmit={onSubmit}>
+            <label className={styles.personalizeToggle} htmlFor="personalize-journal">
+              <input
+                id="personalize-journal"
+                type="checkbox"
+                checked={personalize}
+                onChange={(event) => setPersonalize(event.target.checked)}
+                disabled={pending}
+              />
+              <span className={styles.toggleCopy}>
+                <span className={styles.toggleTitle}>Include my 90-day journal summary</span>
+                <span className={styles.toggleDescription}>
+                  Off by default. When enabled, only symptom-day counts, period dates, medication names, and recent lab values are sent.
+                </span>
+              </span>
+            </label>
             <div className={styles.inputWrapper}>
               <textarea
                 ref={textareaRef}

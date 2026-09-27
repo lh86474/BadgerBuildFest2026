@@ -1,33 +1,32 @@
 # Ask integration
 
-Open /ask after running npm run dev. It starts without records or personalization.
-Load example history, then explicitly enable it to try a personalized scripted
-response. Nothing on this page is persisted. Questions are independent, not a
-multi-turn conversation.
+Open /ask after running the FastAPI backend and `npm run dev`. Personalization
+starts off. Questions are independent, not a multi-turn conversation.
 
 The reusable components/ask.tsx component accepts an optional HealthData prop.
 A host application can supply its current records without a second store or
-an invented localStorage key. The user must opt in on the Ask page. Only the
-question is sent when personalization is off.
+an invented localStorage key. A default-off checkbox asks the user to opt in
+before the component creates and sends the minimized summary. Only the question
+is sent when personalization is off.
 
-POST /api/ask accepts { question, data? } and returns { answer, provider }.
-The development endpoint validates consented records, scopes them by owner,
-and builds a 90-day context with distinct-day symptom counts, period starts,
+POST /api/ask accepts `{ question, personalize, health_context? }`, forwards the
+request to `RAG_API_URL` (default `http://localhost:8000`) and returns
+`{ answer, citations, personalized }`. The browser sends only the minimized
+90-day context when opted in; the route whitelists its fields and rejects raw
+records. The summary contains distinct-day symptom counts, period starts,
 overlapping medications, and dated lab values with units and reference ranges.
-Context excludes identity, notes, appointments, and saved questions. The
-development request can contain raw records; the projection happens on the
-server. Do not treat a client-supplied owner ID as authentication.
+It excludes identity, notes, appointments, and saved questions.
 
-ResearchRetriever is independently injectable. Its development implementation
-explicitly returns not-connected and no citations. AIService retains history
-and visit-summary methods for other owners; no visit-summary UI is implemented.
+Set `RAG_API_KEY` on both the Next.js server and FastAPI service for
+server-to-server authorization. The key is never exposed to browser code. The
+FastAPI service itself does not currently validate Clerk sessions; do not expose
+its port publicly without an authenticated proxy or JWT verification.
 
 ## Databricks integration boundary
 
-lib/server/services.ts is guarded by server-only. It defines contracts for
-Databricks Model Serving, Vector Search retrieval, and an authenticated context
-repository. No Databricks network integration or credential is present.
-AI_PROVIDER defaults to development; any other value fails closed with a 503.
+The Python backend uses Databricks Vector Search and ChatDatabricks. See
+`rag-backend.md` for its Databricks settings, startup instructions, and Clerk
+authentication placeholders.
 
 Before enabling a real provider, implement authenticated server identity and
 repository authorization, a curated research index with source provenance,
@@ -43,4 +42,4 @@ payloads. Bind real adapters only in the server factory after authentication
 is implemented. These are integration interfaces, not a claim of a live
 Databricks connection.
 
-Checks: npm run typecheck, npm run lint, npm run test:ask.
+Checks: `npm run typecheck`, `npm run lint`, `npm run test:ask`.

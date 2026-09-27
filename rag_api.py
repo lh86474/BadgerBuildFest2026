@@ -383,3 +383,7 @@ async def ask(payload: AskRequest, authorization: Optional[str] = Header(default
             detail="The research assistant is unavailable. Try again shortly.",
             headers={"Cache-Control": "no-store"},
         ) from exc
+    
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("rag_api:app", host="127.0.0.1", port=8000, reload=True)

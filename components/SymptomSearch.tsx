@@ -92,13 +92,13 @@ export function SymptomSearch({
   return (
     <section className="symptom-search-container" aria-labelledby="symptom-search-heading">
       <div className="symptom-search-header">
-        <span className="symptom-search-badge">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+        <div className="symptom-search-meta-tag">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
             <circle cx="11" cy="11" r="8" />
             <path d="m21 21-4.3-4.3" />
           </svg>
-          Vector Search
-        </span>
+          <span>Databricks Lakehouse Vector Index</span>
+        </div>
         <h2 id="symptom-search-heading" className="symptom-search-title">
           {title}
         </h2>
@@ -211,7 +211,7 @@ export function SymptomSearch({
                     className="action-link"
                     onClick={() => onSelectSymptom(item.symptom)}
                   >
-                    Select symptom →
+                    Ask AI about this symptom →
                   </button>
                 )}
               </div>

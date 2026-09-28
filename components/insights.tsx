@@ -52,7 +52,6 @@ export default function Insights({ data: propData, end }: {data:HealthData; end:
       <ScrollReveal yOffset={24}>
         <section className="page-hero" aria-labelledby="insights-hero-title">
           <div className="hero-content">
-            <p className="hero-badge">Longitudinal health patterns</p>
             <h1 id="insights-hero-title">A clearer view of your history.</h1>
             <p className="hero-subtitle">Your cycles, symptoms, and daily rhythms, in context.</p>
             <div className="hero-actions">

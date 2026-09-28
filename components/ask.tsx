@@ -1,13 +1,13 @@
 'use client';
 
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
+import Link from 'next/link';
 import { useUser } from '@clerk/nextjs';
 import type { Answer } from '../lib/ai';
 import { type HealthData } from '../lib/health';
 import { getInitialOrStoredHealthData, saveHealthDataLocally } from '../lib/health-storage';
 import styles from '../app/ask/ask.module.css';
 import { ScrollReveal, PhysicsInteractive, MagneticButton } from './motion';
-import { SymptomSearch } from './SymptomSearch';
 import { ExpertReviewModal } from './expert-review-modal';
 
 const starterSuggestions = [
@@ -49,7 +49,13 @@ type Message = {
   timestamp: string;
 };
 
-export default function Ask({ data: initialPropData }: { data?: HealthData }) {
+export default function Ask({
+  data: initialPropData,
+  initialQuery,
+}: {
+  data?: HealthData;
+  initialQuery?: string;
+} = {}) {
   const { isSignedIn, user } = useUser();
   const currentUserId = isSignedIn && user ? user.id : "local-user";
 
@@ -58,7 +64,6 @@ export default function Ask({ data: initialPropData }: { data?: HealthData }) {
   const [question, setQuestion] = useState('');
   const [pending, setPending] = useState(false);
   const [error, setError] = useState('');
-  const [showSearch, setShowSearch] = useState(false);
 
   // Expert feedback & correction state
   const [reviewTarget, setReviewTarget] = useState<{
@@ -97,6 +102,15 @@ export default function Ask({ data: initialPropData }: { data?: HealthData }) {
         .catch(() => {});
     }
   }, [isSignedIn, currentUserId]);
+
+  // Handle incoming initial query (e.g. from /search redirect)
+  const initialHandled = useRef(false);
+  useEffect(() => {
+    if (initialQuery && initialQuery.trim() && !initialHandled.current) {
+      initialHandled.current = true;
+      handleSend(initialQuery.trim());
+    }
+  }, [initialQuery]);
 
   const scrollToPromptBox = (behavior: ScrollBehavior = 'smooth') => {
     if (!chatContainerRef.current) return;
@@ -282,57 +296,33 @@ export default function Ask({ data: initialPropData }: { data?: HealthData }) {
         <ScrollReveal yOffset={20}>
           <header className={styles.header}>
             <div className={styles.headerContent}>
-              <div>
-                <p className="hero-badge">AI Clinical Companion</p>
+              <div className={styles.headerTitles}>
                 <h1 className={styles.headerTitle}>Make sense of your health history.</h1>
                 <p className={styles.headerSubtitle}>
-                  A Gemini-style conversational space to explore your symptoms, cycles, and doctor-ready questions.
+                  A conversational space to explore your symptoms, cycles, and doctor-ready questions.
                 </p>
               </div>
-              <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
-                <button
-                  type="button"
-                  onClick={() => setShowSearch((prev) => !prev)}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    padding: '6px 14px',
-                    fontSize: '12.5px',
-                    fontWeight: 600,
-                    borderRadius: '20px',
-                    border: '1px solid var(--line)',
-                    background: showSearch ? 'var(--teal)' : 'var(--surface)',
-                    color: showSearch ? '#ffffff' : 'var(--ink)',
-                    cursor: 'pointer',
-                    transition: 'all 180ms ease',
-                  }}
-                  aria-expanded={showSearch}
+              <div className={styles.headerActions}>
+                <Link
+                  href="/search"
+                  className={styles.featureSearchButton}
+                  aria-label="Search Symptoms & Evidence"
                 >
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <circle cx="11" cy="11" r="8" />
-                    <path d="m21 21-4.3-4.3" />
-                  </svg>
-                  <span>{showSearch ? 'Hide Vector Search' : 'Search Symptoms & Evidence'}</span>
-                </button>
-                <div className={styles.statusPill}>
-                  <span className={styles.statusDot} aria-hidden="true" />
-                  <span>Personalized with your journal</span>
-                </div>
+                  <div className={styles.featureSearchIconBox} aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="11" cy="11" r="8" />
+                      <path d="m21 21-4.3-4.3" />
+                    </svg>
+                  </div>
+                  <div className={styles.featureSearchText}>
+                    <span className={styles.featureSearchTitle}>Search Symptoms &amp; Evidence</span>
+                    <span className={styles.featureSearchSub}>Clinical literature &amp; Vector DB &rarr;</span>
+                  </div>
+                </Link>
               </div>
             </div>
           </header>
         </ScrollReveal>
-
-        {showSearch && (
-          <ScrollReveal yOffset={10}>
-            <SymptomSearch
-              onSelectSymptom={(sym) => {
-                handleSend(`What clinical insights and clinician questions should I know about ${sym} in PCOS?`);
-              }}
-            />
-          </ScrollReveal>
-        )}
 
         {/* Message History (Scrollable Conversation Area) */}
         <main className={styles.conversation} aria-live="polite" aria-relevant="additions">

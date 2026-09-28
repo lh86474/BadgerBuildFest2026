@@ -27,9 +27,6 @@ export function LandingPage() {
           <div className="hero-content">
             <StaggerReveal staggerDelay={0.09}>
               <StaggerItem>
-                <p className="hero-badge">Your personal health journal</p>
-              </StaggerItem>
-              <StaggerItem>
                 <div className="hero-headline-group">
                   <h1 id="landing-hero-title">
                     A little more context.
@@ -605,6 +602,9 @@ export function AskPreview() {
                 <Icon name="arrow" />
               </button>
             </SignUpButton>
+            <Link href="/search" className="hero-explore-link" style={{ textDecoration: 'none' }}>
+              <span>Search Symptoms &amp; Evidence &rarr;</span>
+            </Link>
             <SignInButton mode="modal">
               <button type="button" className="hero-explore-link">
                 <span>Sign In</span>

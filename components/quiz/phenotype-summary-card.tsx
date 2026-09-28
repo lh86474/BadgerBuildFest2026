@@ -23,13 +23,6 @@ export function PhenotypeSummaryCard({
       <>
         <div className={styles.onboardingCard}>
           <div>
-            <div className={styles.dashboardTag}>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <circle cx="12" cy="12" r="10" />
-                <path d="m9 12 2 2 4-4" />
-              </svg>
-              <span>Onboarding Step</span>
-            </div>
             <h3 className={styles.dashboardTitle}>
               {userName ? `Welcome, ${userName}. Uncover your PCOS phenotype` : 'Uncover your PCOS phenotype & cycle mechanics'}
             </h3>
@@ -64,12 +57,6 @@ export function PhenotypeSummaryCard({
       <article className={styles.dashboardCard} aria-labelledby="phenotype-summary-title">
         <div className={styles.dashboardHeader}>
           <div>
-            <div className={styles.dashboardTag}>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-              </svg>
-              <span>Your Assessed Profile &middot; {quizResult.phenotype}</span>
-            </div>
             <h3 className={styles.dashboardTitle} id="phenotype-summary-title">
               {quizResult.phenotypeTitle}
             </h3>

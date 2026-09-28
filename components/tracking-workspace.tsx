@@ -303,7 +303,6 @@ function LoadedTrackingWorkspace() {
       <ScrollReveal yOffset={20}>
         <section className="page-hero" aria-labelledby="track-hero-title">
           <div className="hero-content">
-            <p className="hero-badge">Your personal health journal</p>
             <h1 id="track-hero-title">Make room for how you feel.</h1>
             <p className="hero-subtitle">A few details today. A clearer record over time.</p>
           </div>

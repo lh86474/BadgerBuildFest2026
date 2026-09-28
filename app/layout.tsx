@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PHASE | Your health, in context",
+  title: "PHASE | Because every phase is different",
   description:
     "A calm space to explore your health history, one day at a time.",
   icons: {

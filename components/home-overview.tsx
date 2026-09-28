@@ -158,9 +158,6 @@ function HomeOverviewContent({
           <div className="hero-content">
             <StaggerReveal staggerDelay={0.09}>
               <StaggerItem>
-                <p className="hero-badge">Your personal health journal</p>
-              </StaggerItem>
-              <StaggerItem>
                 <div className="hero-headline-group">
                   <h1 id="home-hero-title">
                     {userName ? `Welcome to PHASE, ${userName}` : "Welcome to PHASE"}

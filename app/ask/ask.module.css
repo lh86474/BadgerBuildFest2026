@@ -54,9 +54,14 @@
 .headerContent {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
+  align-items: center;
+  gap: 20px;
   flex-wrap: wrap;
+}
+
+.headerTitles {
+  flex: 1;
+  min-width: 280px;
 }
 
 .headerTitle {
@@ -65,7 +70,7 @@
   font-weight: 400;
   line-height: 1.25;
   letter-spacing: -0.02em;
-  margin: 8px 0 6px;
+  margin: 0 0 6px;
 }
 
 .headerSubtitle {
@@ -75,32 +80,74 @@
   line-height: 1.5;
 }
 
-.statusPill {
+.headerActions {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.featureSearchButton {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 14px;
-  border-radius: 9999px;
-  background: rgba(36, 100, 95, 0.08);
-  border: 1px solid rgba(36, 100, 95, 0.2);
-  font-size: 13px;
-  font-weight: 600;
+  gap: 14px;
+  padding: 12px 20px;
+  background: #ffffff;
+  border: 1.5px solid var(--wash);
+  border-radius: 12px;
+  text-decoration: none;
+  color: var(--ink);
+  box-shadow: 0 2px 8px rgba(36, 63, 64, 0.05);
+  transition: all 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.featureSearchButton:hover {
+  transform: translateY(-2px);
+  border-color: var(--teal);
+  box-shadow: 0 6px 20px rgba(36, 100, 95, 0.15);
+  background: #ffffff;
+}
+
+.featureSearchButton:active {
+  transform: translateY(0);
+}
+
+.featureSearchIconBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(36, 100, 95, 0.09);
   color: var(--teal);
-  white-space: nowrap;
-  transition: transform 180ms ease, box-shadow 180ms ease;
+  flex-shrink: 0;
+  transition: all 200ms ease;
 }
 
-.statusPill:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(36, 100, 95, 0.14);
+.featureSearchButton:hover .featureSearchIconBox {
+  background: var(--teal);
+  color: #ffffff;
+  transform: scale(1.05);
 }
 
-.statusDot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #238551;
-  box-shadow: 0 0 0 2px rgba(35, 133, 81, 0.2);
+.featureSearchText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.featureSearchTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+.featureSearchSub {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 400;
+  margin-top: 3px;
 }
 
 /* Conversation Stream */

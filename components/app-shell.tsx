@@ -19,6 +19,7 @@ export const navigation: {
   { href: "/track", label: "Track", icon: "track", description: "Daily symptoms & logs" },
   { href: "/insights", label: "Insights", icon: "insights", description: "Patterns & visit summary" },
   { href: "/ask", label: "Ask", icon: "ask", description: "Questions for care team" },
+  { href: "/search", label: "Evidence", icon: "search", description: "Symptoms & clinical evidence" },
 ];
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -71,7 +72,10 @@ export function AppShell({ children }: { children: ReactNode }) {
                 priority
               />
             </span>
-            <span className="brand-text">PHASE</span>
+            <span className="brand-text">
+              PHASE
+              <small className="brand-tagline">Because every phase is different</small>
+            </span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -231,7 +235,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 </span>
                 <span className="brand-text">
                   PHASE
-                  <small>Your health, in context</small>
+                  <small>Because every phase is different</small>
                 </span>
               </Link>
               <p className="footer-tagline">

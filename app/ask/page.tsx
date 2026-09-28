@@ -8,12 +8,17 @@ export const metadata: Metadata = {
   description: "Explore your recorded health history and prepare questions for your care team.",
 };
 
-export default async function AskPage() {
+export default async function AskPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ q?: string }>;
+}) {
   const { userId } = await auth();
+  const sp = searchParams ? await searchParams : undefined;
 
   if (!userId) {
     return <AskPreview />;
   }
 
-  return <Ask />;
+  return <Ask initialQuery={sp?.q} />;
 }

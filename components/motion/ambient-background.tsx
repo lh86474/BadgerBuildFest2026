@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React from "react";
 import { motion, useReducedMotion } from "framer-motion";
 
 interface AmbientBackgroundProps {
@@ -10,35 +10,12 @@ interface AmbientBackgroundProps {
 
 /**
  * AmbientBackground: Creates slow, high-variance ambient motion (12s - 20s cycles)
- * with a shifting gradient mesh and floating ethereal particles that contrast
- * with fast 150ms snappy micro-interactions.
+ * with a shifting gradient mesh that contrasts with snappy micro-interactions.
  */
 export function AmbientBackground({
   className = "",
-  particleCount = 12,
 }: AmbientBackgroundProps) {
   const shouldReduceMotion = useReducedMotion();
-
-  // Generate deterministic particle coordinates to avoid hydration mismatch
-  const particles = useMemo(() => {
-    return Array.from({ length: particleCount }).map((_, i) => {
-      // Deterministic pseudo-random based on index
-      const seed = (i * 9301 + 49297) % 233280;
-      const left = ((seed / 233280) * 90 + 5).toFixed(1);
-      const top = (((seed * 3) % 233280) / 233280 * 85 + 5).toFixed(1);
-      const size = (((seed * 7) % 233280) / 233280 * 8 + 4).toFixed(1);
-      const duration = (12 + ((seed * 11) % 233280) / 233280 * 8).toFixed(1);
-      const delay = (((seed * 13) % 233280) / 233280 * 5).toFixed(1);
-      return {
-        id: i,
-        left: `${left}%`,
-        top: `${top}%`,
-        size: `${size}px`,
-        duration: parseFloat(duration),
-        delay: parseFloat(delay),
-      };
-    });
-  }, [particleCount]);
 
   if (shouldReduceMotion) {
     return (
@@ -103,36 +80,6 @@ export function AmbientBackground({
           ease: "easeInOut",
         }}
       />
-
-      {/* Ambient Floating Particles */}
-      {particles.map((p) => (
-        <motion.div
-          key={p.id}
-          className="absolute rounded-full pointer-events-none"
-          style={{
-            left: p.left,
-            top: p.top,
-            width: p.size,
-            height: p.size,
-            background:
-              p.id % 2 === 0
-                ? "rgba(102, 163, 191, 0.35)"
-                : "rgba(36, 101, 99, 0.25)",
-            willChange: "transform",
-            transform: "translate3d(0,0,0)",
-          }}
-          animate={{
-            y: [0, -28, 12, 0],
-            x: [0, 14, -14, 0],
-          }}
-          transition={{
-            duration: p.duration,
-            repeat: Infinity,
-            delay: p.delay,
-            ease: "easeInOut",
-          }}
-        />
-      ))}
     </div>
   );
 }

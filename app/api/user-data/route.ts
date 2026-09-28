@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { DatabricksStorageService } from '../../../lib/server/databricks-storage';
 import type { HealthData } from '../../../lib/health';
-import { mergeWithBaselineData } from '../../../lib/health-storage';
 
 export const dynamic = 'force-dynamic';
 

@@ -2,13 +2,12 @@
 import { useEffect, useState, useMemo, useSyncExternalStore } from "react";
 import { DailyLogForm, Medications, Labs, Cycles, WeightManager } from "./tracking";
 import { SymptomInsights } from "./symptom-insights";
-import { dateKey, HealthData, pretty, addDays } from "../lib/health";
+import { dateKey, HealthData, pretty, addDays, emptyData } from "../lib/health";
 import { useUser } from "@clerk/nextjs";
 import {
   getInitialOrStoredHealthData,
   saveHealthDataLocally,
 } from "../lib/health-storage";
-import { sampleHealthData } from "../lib/sample-data";
 import { ScrollReveal, PhysicsInteractive } from "./motion";
 
 const sections = [
@@ -131,7 +130,7 @@ function LoadedTrackingWorkspace() {
 
   const [data, setData] = useState<HealthData | null>(null);
   const [error] = useState("");
-  const [sampleLoadedNotice, setSampleLoadedNotice] = useState("");
+  const [resetNotice, setResetNotice] = useState("");
   const [section, setSection] = useState<Section>("Daily log");
   const [date, setDate] = useState(dateKey());
   const [dirty, setDirty] = useState(false);
@@ -314,18 +313,18 @@ function LoadedTrackingWorkspace() {
               className="button button-quiet"
               style={{ fontSize: '0.8125rem', padding: '0.375rem 0.75rem' }}
               onClick={() => {
-                if (window.confirm("Reload the 2-year sample dataset (731 daily logs, 20 cycles, medications, and labs)?")) {
-                  save(sampleHealthData);
-                  setSampleLoadedNotice("Loaded 2 years of sample records.");
-                  setTimeout(() => setSampleLoadedNotice(""), 4500);
+                if (window.confirm("Are you sure you want to clear your journal records and start fresh?")) {
+                  save(emptyData(currentUserId));
+                  setResetNotice("Journal cleared and reset to fresh state.");
+                  setTimeout(() => setResetNotice(""), 4500);
                 }
               }}
             >
-              Reload 2-Year Sample Data
+              Reset to fresh journal
             </button>
-            {sampleLoadedNotice && (
+            {resetNotice && (
               <span className="badge" role="status">
-                {sampleLoadedNotice}
+                {resetNotice}
               </span>
             )}
           </div>

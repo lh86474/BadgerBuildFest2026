@@ -2,6 +2,11 @@ import type { HealthData } from './health';
 import { assembleHealthContext, type HealthContext } from './health-context';
 import { DevelopmentResearchRetriever, type ResearchRetriever, type ResearchSource } from './research';
 
+export type ChatHistoryMessage = {
+  role: 'user' | 'assistant';
+  content: string;
+};
+
 export type Answer = {
   source: 'Your data' | 'Research' | 'AI interpretation' | 'Community experiences' | 'Questions for your clinician';
   text: string;
@@ -9,7 +14,7 @@ export type Answer = {
   tags?: string[];
 }[];
 export interface AIService {
-  answerHealthQuestion(question: string, data?: HealthData): Promise<Answer>;
+  answerHealthQuestion(question: string, data?: HealthData, history?: ChatHistoryMessage[]): Promise<Answer>;
   summarizeHealthHistory(data: HealthData): Promise<string>;
   generateVisitSummary(data: HealthData): Promise<string>;
   retrieveRelevantResearch(question: string): Promise<ResearchSource[]>;
@@ -106,7 +111,7 @@ export function describeContext(context?: HealthContext): string {
 export class DevelopmentAIService implements AIService {
   private readonly research: ResearchRetriever;
   constructor(research: ResearchRetriever = new DevelopmentResearchRetriever()) { this.research = research; }
-  async answerHealthQuestion(question: string, data?: HealthData): Promise<Answer> {
+  async answerHealthQuestion(question: string, data?: HealthData, history?: ChatHistoryMessage[]): Promise<Answer> {
     const context = assembleHealthContext(data);
     const q = question.toLowerCase();
     const tags = extractContextTags(context, question);

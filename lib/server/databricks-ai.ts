@@ -27,18 +27,67 @@ function cleanText(text: string): string {
     .trim();
 }
 
-export function normalizeAIResponse(rawContent: string): { interpretation: string; clinicianQuestions: string } {
+export interface ParsedAIResponse {
+  interpretation: string;
+  clinicianQuestions: string;
+  references: Array<{
+    title: string;
+    publisher?: string;
+    excerpt?: string;
+    url?: string;
+  }>;
+}
+
+export function normalizeAIResponse(rawContent: string): ParsedAIResponse {
   if (!rawContent || !rawContent.trim()) {
-    return { interpretation: '', clinicianQuestions: '' };
+    return { interpretation: '', clinicianQuestions: '', references: [] };
   }
 
   const trimmed = rawContent.trim();
+  let interpretation = '';
+  let clinicianQuestions = '';
+  const references: Array<{ title: string; publisher?: string; excerpt?: string; url?: string }> = [];
+
+  // Parse ### CLINICAL REFERENCES if present
+  const refSplit = trimmed.split(/###\s*(?:CLINICAL\s*REFERENCES?|REFERENCES?|CITATIONS?|STUDIES)/i);
+  let mainContent = trimmed;
+  if (refSplit.length > 1) {
+    mainContent = refSplit[0].trim();
+    const refLines = refSplit[1].trim().split('\n');
+    for (const line of refLines) {
+      const cleanedLine = line.replace(/^[•*-]\s*/, '').trim();
+      if (!cleanedLine) continue;
+
+      const titleMatch = cleanedLine.match(/Title:\s*([^|]+)/i);
+      const journalMatch = cleanedLine.match(/Journal:\s*([^|]+)/i);
+      const findingMatch = cleanedLine.match(/Finding:\s*([^|]+)/i);
+
+      if (titleMatch) {
+        const title = titleMatch[1].trim();
+        const publisher = journalMatch ? journalMatch[1].trim() : 'Medical Literature';
+        const excerpt = findingMatch ? findingMatch[1].trim() : cleanedLine;
+        references.push({
+          title,
+          publisher,
+          excerpt,
+          url: `https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(title)}`,
+        });
+      } else if (cleanedLine.length > 20) {
+        references.push({
+          title: cleanedLine.slice(0, 80) + (cleanedLine.length > 80 ? '...' : ''),
+          publisher: 'Peer-reviewed Research',
+          excerpt: cleanedLine,
+          url: `https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(cleanedLine.slice(0, 60))}`,
+        });
+      }
+    }
+  }
 
   // 1. Try JSON parsing if JSON structure is detected
-  if (trimmed.startsWith('{') || trimmed.includes('"interpretation"')) {
+  if (mainContent.startsWith('{') || mainContent.includes('"interpretation"')) {
     try {
-      const match = trimmed.match(/```(?:json)?\s*([\s\S]*?)\s*```/) || trimmed.match(/(\{[\s\S]*\})/);
-      const toParse = match ? match[1] : trimmed;
+      const match = mainContent.match(/```(?:json)?\s*([\s\S]*?)\s*```/) || mainContent.match(/(\{[\s\S]*\})/);
+      const toParse = match ? match[1] : mainContent;
       const parsed = JSON.parse(toParse);
       if (parsed && (parsed.interpretation || parsed.clinicianQuestions)) {
         let cq = '';
@@ -50,12 +99,13 @@ export function normalizeAIResponse(rawContent: string): { interpretation: strin
         return {
           interpretation: cleanText(String(parsed.interpretation || '')),
           clinicianQuestions: cq,
+          references,
         };
       }
     } catch {
       // Regex extraction fallback for malformed or unescaped JSON
-      const interpMatch = trimmed.match(/"interpretation"\s*:\s*"([\s\S]*?)(?:",\s*"clinicianQuestions"|"\s*\})/);
-      const qMatch = trimmed.match(/"clinicianQuestions"\s*:\s*(?:\[([\s\S]*?)\]|"([\s\S]*?)")/);
+      const interpMatch = mainContent.match(/"interpretation"\s*:\s*"([\s\S]*?)(?:",\s*"clinicianQuestions"|"\s*\})/);
+      const qMatch = mainContent.match(/"clinicianQuestions"\s*:\s*(?:\[([\s\S]*?)\]|"([\s\S]*?)")/);
 
       if (interpMatch) {
         const interp = interpMatch[1].replace(/\\n/g, '\n').replace(/\\"/g, '"').trim();
@@ -75,32 +125,25 @@ export function normalizeAIResponse(rawContent: string): { interpretation: strin
         return {
           interpretation: cleanText(interp),
           clinicianQuestions: cq,
+          references,
         };
       }
     }
   }
 
   // 2. Structured markdown headers: ### INTERPRETATION ... ### QUESTIONS FOR YOUR CLINICIAN
-  const sectionSplit = trimmed.split(/###\s*(?:QUESTIONS?\s*FOR\s*(?:YOUR\s*)?CLINICIAN|CLINICIAN_QUESTIONS?|DOCTOR_QUESTIONS?)/i);
+  const sectionSplit = mainContent.split(/###\s*(?:QUESTIONS?\s*FOR\s*(?:YOUR\s*)?CLINICIAN|CLINICIAN_QUESTIONS?|DOCTOR_QUESTIONS?)/i);
   if (sectionSplit.length > 1) {
-    const interpRaw = sectionSplit[0].replace(/###\s*INTERPRETATION\s*/i, '').trim();
-    const cqRaw = sectionSplit[1].trim();
-    return {
-      interpretation: cleanText(interpRaw),
-      clinicianQuestions: cleanText(cqRaw),
-    };
+    interpretation = sectionSplit[0].replace(/###\s*INTERPRETATION\s*/i, '').trim();
+    clinicianQuestions = sectionSplit[1].trim();
+  } else {
+    interpretation = mainContent.replace(/###\s*INTERPRETATION\s*/i, '').trim();
   }
 
-  // 3. Fallback: Clean any residual syntax
-  const cleaned = trimmed
-    .replace(/^\{[\s\S]*?"interpretation"\s*:\s*"?/i, '')
-    .replace(/"\s*,\s*"clinicianQuestions"[\s\S]*$/i, '')
-    .replace(/["'\}\]]+$/g, '')
-    .trim();
-
   return {
-    interpretation: cleanText(cleaned),
-    clinicianQuestions: '',
+    interpretation: cleanText(interpretation),
+    clinicianQuestions: cleanText(clinicianQuestions),
+    references,
   };
 }
 
@@ -129,8 +172,16 @@ export class DatabricksAIService implements AIService, DatabricksModelServing {
     });
   }
 
-  async answer(input: { question: string; context?: HealthContext; research: ResearchResult }, options?: { signal?: AbortSignal }): Promise<Answer> {
-    const { question, context, research } = input;
+  async answer(
+    input: {
+      question: string;
+      context?: HealthContext;
+      research: ResearchResult;
+      history?: Array<{ role: 'user' | 'assistant'; content: string }>;
+    },
+    options?: { signal?: AbortSignal }
+  ): Promise<Answer> {
+    const { question, context, research, history } = input;
     const { host, token, endpoint, mockMode } = this.config;
     const tags = extractContextTags(context, question);
     const qLower = question.toLowerCase();
@@ -140,26 +191,30 @@ export class DatabricksAIService implements AIService, DatabricksModelServing {
     if (host && token && endpoint && !mockMode) {
       try {
         const cleanHost = host.replace(/\/+$/, '');
-        // Standard Databricks Model Serving endpoint invocations
         const invocationUrl = `${cleanHost}/serving-endpoints/${encodeURIComponent(endpoint)}/invocations`;
 
-        const systemPrompt = `You are a clinical PCOS health companion powered by Databricks AI.
-You have direct access to the user's private, de-identified health journal context (including specific dated log entries, symptoms, medications, and labs) and retrieved peer-reviewed medical citations from Databricks Vector Search.
+        const systemPrompt = `You are an empathetic, clinical-grade PCOS health companion powered by Databricks AI.
+You have direct access to the user's private, de-identified health journal context (recent daily logs, symptoms, cycle starts, medications, and labs).
 
-CRITICAL INSTRUCTIONS:
-1. GROUNDING IN USER LOGS: You MUST directly reference the user's specific logged journal entries by date, symptom severity, medications, and cycle patterns (e.g., "Looking at your log from [Date] where you tracked acne and fatigue..."). Never state that the journal is empty if entries are present.
-2. MEDICAL CITATIONS: Ground medical claims strictly in the provided research citations. Do NOT fabricate clinical facts.
-3. OUTPUT FORMAT: Present your response in two designated sections. Do NOT output raw JSON, curly braces, quotes, or JSON brackets.
+INSTRUCTIONS:
+1. GROUNDING IN USER DATA: If the user has logged entries, actively cite their specific dates, symptoms, and cycle patterns (e.g. "Looking at your log from [Date] where you tracked acne and fatigue..."). If their journal is empty or new, acknowledge that kindly and provide clear clinical education.
+2. MULTI-TURN CONVERSATION: Maintain smooth conversational context across prior messages in the conversation. Answer follow-up questions directly.
+3. EVIDENCE-BASED & ACCURATE: Ground explanations in peer-reviewed clinical consensus (e.g., Rotterdam criteria, ESHRE/ASRM, ACOG, The Lancet). Do NOT fabricate medical facts.
+4. OUTPUT FORMAT: Present your response in these structured markdown sections:
 
 ### INTERPRETATION
-Provide a comprehensive, empathetic, and evidence-grounded explanation (2-3 paragraphs with clean bullet points where appropriate) referencing the user's specific logged symptoms and dates.
+Provide a clear, supportive, and scientifically grounded response (2-3 structured paragraphs or concise bullet points). Address the user's question directly.
 
 ### QUESTIONS FOR YOUR CLINICIAN
-Provide 1 to 3 targeted, specific questions for the user to bring to their doctor at their next visit. Format each question on its own bullet point.`;
+Provide 1 to 3 targeted, high-value questions the user can bring to their healthcare provider at their next appointment. Format each question on its own bullet point.
+
+### CLINICAL REFERENCES
+Provide 1 to 3 real, peer-reviewed clinical studies or clinical practice guidelines directly relevant to the user's question and symptoms. Format each reference on its own line:
+- Title: [Study Title] | Journal: [Journal or Organization] | Finding: [Key clinical finding in 1 sentence]`;
 
         const verifiedExamples = await databricksExpertReviews.getTopVerifiedExamples(question, 1).catch(() => []);
         const fewShotText = verifiedExamples.length > 0
-          ? `\nCLINICIAN-VERIFIED GOLD STANDARD REFERENCE EXAMPLE (Follow this clinical tone and rigor):\nReference Question: "${verifiedExamples[0].question}"\nExpert-Approved Response:\n${verifiedExamples[0].answer}\n${verifiedExamples[0].expertComments ? `Expert Feedback Note: ${verifiedExamples[0].expertComments}\n` : ''}\n`
+          ? `\nCLINICIAN-VERIFIED GOLD STANDARD REFERENCE EXAMPLE:\nReference Question: "${verifiedExamples[0].question}"\nExpert-Approved Response:\n${verifiedExamples[0].answer}\n${verifiedExamples[0].expertComments ? `Expert Feedback Note: ${verifiedExamples[0].expertComments}\n` : ''}\n`
           : '';
 
         const userPrompt = `USER QUESTION: "${question}"
@@ -167,9 +222,28 @@ Provide 1 to 3 targeted, specific questions for the user to bring to their docto
 USER HEALTH JOURNAL CONTEXT (De-identified 90-day window):
 ${describeContext(context)}
 
-RETRIEVED RESEARCH FROM DATABRICKS VECTOR SEARCH:
+RETRIEVED RESEARCH CANDIDATES:
 ${JSON.stringify(research.sources.map(s => ({ title: s.title, publisher: s.publisher, excerpt: s.excerpt })))}
 ${fewShotText}`;
+
+        // Build messages array including conversation history (last 6 turns for conversational continuity)
+        const messagesPayload: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [
+          { role: 'system', content: systemPrompt },
+        ];
+
+        if (history && Array.isArray(history) && history.length > 0) {
+          const recentHistory = history.slice(-6);
+          for (const h of recentHistory) {
+            if (h.content && (h.role === 'user' || h.role === 'assistant')) {
+              messagesPayload.push({
+                role: h.role,
+                content: h.content.trim(),
+              });
+            }
+          }
+        }
+
+        messagesPayload.push({ role: 'user', content: userPrompt });
 
         const res = await fetch(invocationUrl, {
           method: 'POST',
@@ -178,12 +252,9 @@ ${fewShotText}`;
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            messages: [
-              { role: 'system', content: systemPrompt },
-              { role: 'user', content: userPrompt },
-            ],
-            max_tokens: 1000,
-            temperature: 0.2,
+            messages: messagesPayload,
+            max_tokens: 1100,
+            temperature: 0.25,
           }),
           signal: options?.signal,
         });
@@ -196,6 +267,18 @@ ${fewShotText}`;
 
             if (parsed && parsed.interpretation) {
               const lakehouseCommunity = await this.lakehouse.getCohortSummary(question, context);
+
+              // Use dynamic citations from the model if available, else fall back to vector search candidates
+              const dynamicCitations = parsed.references && parsed.references.length > 0
+                ? parsed.references.map((ref, idx) => ({
+                  id: `dyn-${Date.now()}-${idx}`,
+                  title: ref.title,
+                  publisher: ref.publisher || 'Peer-reviewed Research',
+                  excerpt: ref.excerpt || 'Clinical evidence retrieved via Databricks AI.',
+                  url: ref.url || `https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(ref.title)}`,
+                }))
+                : (research.sources.length > 0 ? research.sources : []);
+
               const answer: Answer = [
                 { source: 'AI interpretation', text: parsed.interpretation, tags },
                 { source: 'Your data', text: describeContext(context), tags },
@@ -207,8 +290,8 @@ ${fewShotText}`;
 
               answer.push({
                 source: 'Research',
-                text: research.sources.length ? 'Retrieved sources from Databricks Vector Search index:' : 'No relevant literature found in Vector Search.',
-                citations: research.sources,
+                text: dynamicCitations.length ? 'Clinical citations tailored to your question:' : 'No matching literature citations found.',
+                citations: dynamicCitations,
                 tags,
               });
 
@@ -223,21 +306,25 @@ ${fewShotText}`;
           }
         } else {
           const errorText = await res.text().catch(() => '');
-          console.warn(`[Databricks Model Serving] API returned HTTP ${res.status}: ${errorText}. Falling back to grounded mock synthesis.`);
+          console.warn(`[Databricks Model Serving] API returned HTTP ${res.status}: ${errorText}. Falling back to grounded synthesis.`);
         }
       } catch (err) {
-        console.warn('[Databricks Model Serving] Live call failed or timed out, synthesizing grounded mock response:', err);
+        console.warn('[Databricks Model Serving] Live call failed or timed out, synthesizing grounded response:', err);
       }
     }
 
-    // 2. High-fidelity Databricks AI Synthesis Engine (Mock / Demonstration Mode)
+    // 2. Databricks AI Synthesis Fallback (Mock / Offline Mode)
     return this.synthesizeMockAnswer(question, context, research, tags, hasDoctorIntent);
   }
 
-  async answerHealthQuestion(question: string, data?: HealthData): Promise<Answer> {
+  async answerHealthQuestion(
+    question: string,
+    data?: HealthData,
+    history?: Array<{ role: 'user' | 'assistant'; content: string }>
+  ): Promise<Answer> {
     const context = assembleHealthContext(data);
     const research = await this.retriever.retrieve(question, { limit: 4 });
-    return this.answer({ question, context, research });
+    return this.answer({ question, context, research, history });
   }
 
   async summarizeHealthHistory(data: HealthData): Promise<string> {

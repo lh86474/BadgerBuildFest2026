@@ -1,5 +1,5 @@
 import 'server-only';
-import { DevelopmentAIService, type Answer, type AIService } from '../ai';
+import { DevelopmentAIService, type Answer, type AIService, type ChatHistoryMessage } from '../ai';
 import type { HealthContext } from '../health-context';
 import type { ResearchResult, ResearchRetriever } from '../research';
 
@@ -7,7 +7,7 @@ import { DatabricksAIService } from './databricks-ai';
 
 /** Server-managed OAuth/workload identity only; never accept credentials from a browser. */
 export interface DatabricksModelServing {
-  answer(input: { question: string; context?: HealthContext; research: ResearchResult }, options?: { signal?: AbortSignal }): Promise<Answer>;
+  answer(input: { question: string; context?: HealthContext; research: ResearchResult; history?: ChatHistoryMessage[] }, options?: { signal?: AbortSignal }): Promise<Answer>;
 }
 /** Curated Vector Search index adapter; sources must include provenance. */
 export interface DatabricksResearchRetrieval extends ResearchRetriever {

@@ -211,11 +211,21 @@ export default function Ask({ data: initialPropData }: { data?: HealthData }) {
         ? currentRecords.logs.slice(-120)
         : currentRecords.logs;
 
+      // Build conversational history payload (up to last 8 turns) for multi-turn context
+      const historyPayload = messages.slice(-8).map((m) => {
+        if (m.role === 'user') {
+          return { role: 'user' as const, content: m.question || '' };
+        }
+        const text = m.answer?.find((s) => s.source === 'AI interpretation')?.text || '';
+        return { role: 'assistant' as const, content: text };
+      }).filter((m) => m.content.trim().length > 0);
+
       const response = await fetch('/api/ask', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           question: rawQuestion,
+          history: historyPayload,
           data: {
             ...currentRecords,
             logs: contextLogs,

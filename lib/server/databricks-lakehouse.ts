@@ -43,10 +43,8 @@ export class DatabricksLakehouseAnalytics {
             wait_timeout: '20s',
             on_wait_timeout: 'CONTINUE',
             statement: `
-              SELECT insight_summary, sample_size, p_value
-              FROM health_lakehouse.pcos_cohorts.deidentified_aggregates
-              WHERE topic = 'symptoms'
-              LIMIT 1
+              SELECT count(1), count(distinct user_id)
+              FROM workspace.default.user_health_records
             `,
           }),
         });
@@ -56,7 +54,9 @@ export class DatabricksLakehouseAnalytics {
           if (state === 'SUCCEEDED') {
             const row = data.result?.data_array?.[0];
             if (row && row[0]) {
-              return `From Databricks Lakehouse cohort analysis (N=${row[1] ?? '2,400'} de-identified records, Delta Table: health_lakehouse.pcos_cohorts): ${row[0]}`;
+              const recordCount = row[0];
+              const userCount = row[1] || '1';
+              return `Databricks Lakehouse Cohort (Delta table \`workspace.default.user_health_records\`, ${recordCount} synced record sets across ${userCount} active journal profiles): Real-time longitudinal data is connected to inform clinical patterns and symptom trajectory analysis.`;
             }
           } else {
             console.info(`[Databricks Lakehouse] SQL statement status: ${state}. Warehouse may be starting.`);

@@ -15,12 +15,16 @@ export async function POST(request: Request) {
     }
     question = body.question.trim();
     if ('data' in body && assembleHealthContext(body.data)) data = body.data as HealthData;
-  } catch {
-    return Response.json({ error: 'The question or included records could not be read. Ask without records or check the data and try again.' }, { status: 400, headers });
-  }
-  try {
+
+    let history: Array<{ role: 'user' | 'assistant'; content: string }> | undefined;
+    if ('history' in body && Array.isArray(body.history)) {
+      history = body.history
+        .filter((h) => h && typeof h === 'object' && ('role' in h) && ('content' in h) && (h.role === 'user' || h.role === 'assistant') && typeof h.content === 'string')
+        .map((h) => ({ role: h.role, content: h.content.trim() }));
+    }
+
     const service = getAIService();
-    const answer = await service.answerHealthQuestion(question, data);
+    const answer = await service.answerHealthQuestion(question, data, history);
     return Response.json(
       { answer, provider: process.env.AI_PROVIDER || 'development' },
       { headers }

@@ -4,7 +4,6 @@ import {
   validateLab,
   validateMedication,
 } from "./tracking-validation";
-import { sampleHealthData } from "./sample-data";
 
 export function getHealthStorageKey(userId?: string | null): string {
   if (userId && userId !== "local-user") {
@@ -16,24 +15,8 @@ export function getHealthStorageKey(userId?: string | null): string {
 export const healthStorageKey = "pcos-tracking:v1";
 
 export function mergeWithBaselineData(stored: HealthData): HealthData {
-  if (!stored || !Array.isArray(stored.logs)) return sampleHealthData;
-  if (stored.logs.length >= 30) return stored;
-
-  // Preserve user's actual entries, backfill missing baseline dates from sample dataset
-  const userDates = new Set(stored.logs.map((l) => l.date));
-  const baseLogs = sampleHealthData.logs.filter((l) => !userDates.has(l.date));
-
-  const mergedLogs = [...baseLogs, ...stored.logs].sort((a, b) => a.date.localeCompare(b.date));
-  const mergedMeds = stored.medications?.length ? stored.medications : sampleHealthData.medications;
-  const mergedLabs = stored.labs?.length ? stored.labs : sampleHealthData.labs;
-
-  return {
-    ...sampleHealthData,
-    ...stored,
-    logs: mergedLogs,
-    medications: mergedMeds,
-    labs: mergedLabs,
-  };
+  if (!stored || !Array.isArray(stored.logs)) return emptyData(stored?.user?.id);
+  return stored;
 }
 
 export function parseStoredHealthData(

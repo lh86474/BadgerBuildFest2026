@@ -53,14 +53,15 @@
   }
 }
 
-@media (max-width: 579px) {
+@media (max-width: 768px) {
   .page-hero-grid {
     grid-template-columns: 1fr;
     gap: 24px;
   }
 
-  .hero-visual-wrapper {
-    max-width: 200px;
+  .hero-visual-col,
+  .hero-tablet-emblem {
+    display: none !important;
   }
 }
 

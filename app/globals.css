@@ -396,6 +396,11 @@ main:focus {
     margin-bottom: 24px;
   }
 
+  .hero-visual-col,
+  .hero-tablet-emblem {
+    display: none !important;
+  }
+
   h1 {
     font-size: 32px;
   }

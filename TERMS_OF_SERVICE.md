@@ -4,7 +4,7 @@
 
 ## 1. Introduction
 
-Welcome to our PCOS Health Tracking Platform (the "Service"). By accessing or using our Service, you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, please do not use our Service.
+Welcome to our PMOS Health Tracking Platform (the "Service"). By accessing or using our Service, you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, please do not use our Service.
 
 ## 2. Account Registration & Eligibility
 

@@ -1,6 +1,7 @@
 import type {
   QuizAnswers,
   QuizResult,
+  PMOSPhenotype,
   PCOSPhenotype,
   OvulatoryPillar,
   SecondaryPillar,
@@ -288,7 +289,7 @@ export function calculateQuizResult(answers: QuizAnswers): QuizResult {
       'Occasional fluctuations in post-ovulatory progesterone production or cycle timing subtly shape your monthly symptom rhythm.';
   }
 
-  // 6. Assign 1 of 4 Rotterdam PCOS Phenotypes
+  // 6. Assign 1 of 4 Rotterdam PMOS Phenotypes
   // Phenotype A: Hyperandrogenism + Ovulatory Dysfunction + Metabolic / PCOM Manifestations
   // Phenotype B: Hyperandrogenism + Ovulatory Dysfunction (without prominent metabolic insulin resistance)
   // Phenotype C: Hyperandrogenism + Preserved Ovulation
@@ -302,7 +303,7 @@ export function calculateQuizResult(answers: QuizAnswers): QuizResult {
     ovulatoryDisruptionScore >= 40;
   const hasMetabolicMarkers = metabolicScore >= 40 || answers.fatStorage === 'midsection' || actualSkinMarkers.length > 0;
 
-  let phenotype: PCOSPhenotype;
+  let phenotype: PMOSPhenotype;
   let phenotypeTitle: string;
   let phenotypeSubtitle: string;
   let phenotypeDescription: string;

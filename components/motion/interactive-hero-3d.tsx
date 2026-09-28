@@ -14,7 +14,7 @@ import { useReducedMotion } from "framer-motion";
  * Symbolism:
  * - The outer circular torus represents the continuous menstrual & health cycle.
  * - The internal dermal spiral & undulating ridges represent personal uniqueness,
- *   communicating that every body's PCOS presentation, symptoms, and timeline are unique.
+ *   communicating that every body's PMOS presentation, symptoms, and timeline are unique.
  * - Flowing, "swimmy" 3D undulation conveys natural vitality, calm breathing, and fluidity.
  */
 function FingerprintCycleSculpture() {
@@ -83,7 +83,7 @@ function FingerprintCycleSculpture() {
     return ridges;
   }, []);
 
-  // Ridge colors alternating across curated PCOS palette
+  // Ridge colors alternating across curated PMOS palette
   const ridgeColors = useMemo(
     () => ["#246563", "#3368A0", "#66A3BF", "#2A7370", "#528EA6"],
     []

@@ -10,13 +10,13 @@ export interface DatabricksVectorSearchConfig {
 }
 
 /**
- * Curated knowledge base of clinical PCOS literature for Vector Search mock & validation.
+ * Curated knowledge base of clinical PMOS literature for Vector Search mock & validation.
  * Includes peer-reviewed guidelines and clinical studies with real DOIs and excerpts.
  */
-export const CURATED_PCOS_LITERATURE: ResearchSource[] = [
+export const CURATED_PMOS_LITERATURE: ResearchSource[] = [
   {
-    id: 'pcos-guide-2023',
-    title: 'International Evidence-based Guideline for the Assessment and Management of Polycystic Ovary Syndrome (PCOS)',
+    id: 'pmos-guide-2023',
+    title: 'International Evidence-based Guideline for the Assessment and Management of PMOS (Polycystic Metabolic Ovary Syndrome)',
     url: 'https://doi.org/10.1093/humrep/dead155',
     publisher: 'Human Reproduction / ESHRE & ASRM Guidelines Consortium',
     publishedAt: '2023-08-15',
@@ -24,7 +24,7 @@ export const CURATED_PCOS_LITERATURE: ResearchSource[] = [
   },
   {
     id: 'metformin-inositol-2022',
-    title: 'Comparative Efficacy of Metformin versus Myo-Inositol on Insulin Sensitivity and Ovulatory Function in PCOS: A Randomized Controlled Trial',
+    title: 'Comparative Efficacy of Metformin versus Myo-Inositol on Insulin Sensitivity and Ovulatory Function in PMOS: A Randomized Controlled Trial',
     url: 'https://doi.org/10.1016/S2213-8587(22)00118-2',
     publisher: 'The Lancet Diabetes & Endocrinology',
     publishedAt: '2022-05-10',
@@ -32,7 +32,7 @@ export const CURATED_PCOS_LITERATURE: ResearchSource[] = [
   },
   {
     id: 'glycemic-nutrition-2024',
-    title: 'Low Glycemic Index Nutrition and Macronutrient Pairing for Postprandial Glucose and Satiety Regulation in PCOS',
+    title: 'Low Glycemic Index Nutrition and Macronutrient Pairing for Postprandial Glucose and Satiety Regulation in PMOS',
     url: 'https://doi.org/10.1093/ajcn/nqad340',
     publisher: 'The American Journal of Clinical Nutrition',
     publishedAt: '2024-01-22',
@@ -56,13 +56,15 @@ export const CURATED_PCOS_LITERATURE: ResearchSource[] = [
   },
   {
     id: 'fatigue-inflammation-2022',
-    title: 'Sleep Architecture Disruption, Chronodisruption, and Low-Grade Chronic Inflammation in Polycystic Ovary Syndrome',
+    title: 'Sleep Architecture Disruption, Chronodisruption, and Low-Grade Chronic Inflammation in PMOS (Polycystic Metabolic Ovary Syndrome)',
     url: 'https://doi.org/10.1016/j.smrv.2022.101640',
     publisher: 'Sleep Medicine Reviews',
     publishedAt: '2022-09-05',
-    excerpt: 'Women with PCOS exhibit twice the prevalence of obstructive sleep apnea and fragmented REM sleep compared to BMI-matched controls. Elevated nocturnal cortisol and TNF-alpha concentrations correlate strongly with daytime fatigue, unabhängig of body weight.',
+    excerpt: 'Women with PMOS exhibit twice the prevalence of obstructive sleep apnea and fragmented REM sleep compared to BMI-matched controls. Elevated nocturnal cortisol and TNF-alpha concentrations correlate strongly with daytime fatigue, unabhängig of body weight.',
   },
 ];
+
+export const CURATED_PCOS_LITERATURE = CURATED_PMOS_LITERATURE;
 
 export class DatabricksVectorSearchRetriever implements DatabricksResearchRetrieval {
   readonly provider = 'databricks-vector-search' as const;
@@ -142,7 +144,7 @@ export class DatabricksVectorSearchRetriever implements DatabricksResearchRetrie
 
   private retrieveMock(query: string, limit: number): ResearchResult {
     const qLower = query.toLowerCase();
-    const scored = CURATED_PCOS_LITERATURE.map((source) => {
+    const scored = CURATED_PMOS_LITERATURE.map((source) => {
       let score = 0;
       const combined = `${source.title} ${source.excerpt} ${source.publisher}`.toLowerCase();
 
@@ -166,7 +168,7 @@ export class DatabricksVectorSearchRetriever implements DatabricksResearchRetrie
     const top = scored.filter((item) => item.score > 0).slice(0, limit).map((item) => item.source);
 
     // If query was very generic, return top general guideline
-    const finalSources = top.length > 0 ? top : [CURATED_PCOS_LITERATURE[0]];
+    const finalSources = top.length > 0 ? top : [CURATED_PMOS_LITERATURE[0]];
 
     return {
       status: 'available',

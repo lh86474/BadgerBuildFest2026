@@ -59,7 +59,7 @@ export async function POST(request: Request) {
     // Tag the user record and child collections with their verified Clerk account ID
     data.user = {
       id: userId,
-      name: data.user?.name || 'PCOS Journal User',
+      name: data.user?.name || 'PMOS Journal User',
     };
     if (Array.isArray(data.logs)) {
       data.logs = data.logs.map((l) => ({ ...l, userId }));

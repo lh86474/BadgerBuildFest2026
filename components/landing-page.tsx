@@ -295,7 +295,6 @@ export function TrackPreview() {
               <Icon name="track" />
               <span>Interactive Logger Preview</span>
             </div>
-            <span className="card-header-tag">Live Demo</span>
           </div>
 
           <div className="demo-logger">
@@ -409,7 +408,6 @@ export function InsightsPreview() {
           <div className="doctor-summary-preview">
             <div className="doctor-summary-header">
               <span>Doctor Visit Summary (Export Ready)</span>
-              <span className="card-header-tag">3-Month Record</span>
             </div>
             <div className="doctor-data-row">
               <div className="doctor-stat">
@@ -562,7 +560,6 @@ export function AskPreview() {
               <Icon name="ask" />
               <span>Assistant Conversation Mock</span>
             </div>
-            <span className="card-header-tag">Evidence-Informed</span>
           </div>
 
           <div className="ask-mock-wrapper">
@@ -578,7 +575,7 @@ export function AskPreview() {
 
               <div className="ask-section clinical-sec">
                 <span className="ask-section-tag">Clinical Research</span>
-                <p>In PCOS literature, luteal phase fatigue frequently correlates with nocturnal insulin resistance and progesterone-driven sleep architecture changes.</p>
+                <p>In PMOS literature, luteal phase fatigue frequently correlates with nocturnal insulin resistance and progesterone-driven sleep architecture changes.</p>
               </div>
 
               <div className="ask-section clinician-sec">
@@ -603,11 +600,176 @@ export function AskPreview() {
               </button>
             </SignUpButton>
             <Link href="/search" className="hero-explore-link" style={{ textDecoration: 'none' }}>
-              <span>Search Symptoms &amp; Evidence &rarr;</span>
+              <span>Search PMOS Symptoms &amp; Evidence &rarr;</span>
             </Link>
             <SignInButton mode="modal">
               <button type="button" className="hero-explore-link">
                 <span>Sign In</span>
+              </button>
+            </SignInButton>
+          </div>
+        </ScrollReveal>
+      </section>
+    </div>
+  );
+}
+
+/* =========================================================================
+ * 04. SEARCH & LITERATURE PREVIEW PAGE (Served on "/search" when user is signed out)
+ * ========================================================================= */
+export function SearchPreview() {
+  const [selectedTopic, setSelectedTopic] = useState<string>("Insulin resistance & cravings");
+
+  const sampleCardContent: Record<string, { category: string; title: string; desc: string; takeaway: string }> = {
+    "Insulin resistance & cravings": {
+      category: "Metabolic & Glycemic Signatures",
+      title: "Insulin Resistance & Reactive Hypoglycemia",
+      desc: "Impaired peripheral cellular sensitivity to insulin leads to compensatory hyperinsulinemia. In PMOS, excess circulating insulin acts synergistically with LH to stimulate ovarian theca cells to produce androgens, while decreasing hepatic SHBG synthesis.",
+      takeaway: "Discuss fasting insulin, HbA1c, and continuous glucose monitoring patterns with your endocrinologist.",
+    },
+    "Irregular cycles & anovulation": {
+      category: "Ovulatory & Cycle Mechanics",
+      title: "Delayed Follicular Maturation & Oligomenorrhea",
+      desc: "Disrupted hypothalamic-pituitary-ovarian signaling and persistent luteinizing hormone elevation can cause follicular arrest, resulting in lengthened cycles (>35 days) or absent menses (amenorrhea).",
+      takeaway: "Tracking cycle length variations and basal body temperature helps your clinician evaluate ovulatory status.",
+    },
+    "Hirsutism & androgen excess": {
+      category: "Androgenic & Dermatologic Flares",
+      title: "Tissue Androgen Sensitivity & 5α-Reductase Activity",
+      desc: "Elevated free testosterone and increased local conversion to dihydrotestosterone (DHT) within hair follicles can stimulate terminal hair growth along androgen-sensitive dermal zones.",
+      takeaway: "Consider requesting a full androgen panel including Total & Free Testosterone, DHEA-S, and Androstenedione.",
+    },
+  };
+
+  const activeContent = sampleCardContent[selectedTopic] || sampleCardContent["Insulin resistance & cravings"];
+
+  return (
+    <div className="preview-page">
+      <ScrollReveal>
+        <div className="landing-header-centered">
+          <h1>Evidence-informed PMOS research &amp; literature</h1>
+          <p>
+            Explore peer-reviewed clinical studies, metabolic mechanisms, and ovulatory guidelines to turn complex symptoms into structured, doctor-ready conversations.
+          </p>
+        </div>
+      </ScrollReveal>
+
+      <div className="landing-feature-grid">
+        <div className="feature-benefits-list">
+          <div className="feature-benefit-item">
+            <div className="benefit-icon-badge">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+              </svg>
+            </div>
+            <div className="benefit-content">
+              <h3>Peer-Reviewed Consensus Literature</h3>
+              <p>Index clinical guidelines from international endocrine societies, ASRM/ESHRE consensuses, and peer-reviewed journals without wading through paywalls or misinformation.</p>
+            </div>
+          </div>
+
+          <div className="feature-benefit-item">
+            <div className="benefit-icon-badge">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.3-4.3" />
+              </svg>
+            </div>
+            <div className="benefit-content">
+              <h3>Biological Mechanisms Over Guesswork</h3>
+              <p>Understand the root physiological drivers behind irregular cycles, fatigue spikes, insulin sensitivity, and androgenic flares rather than receiving generic tips.</p>
+            </div>
+          </div>
+
+          <div className="feature-benefit-item">
+            <div className="benefit-icon-badge">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
+              </svg>
+            </div>
+            <div className="benefit-content">
+              <h3>Prepared for Doctor Appointments</h3>
+              <p>Bridge the gap between your journal logs and clinical research. Formulate precise questions that respect clinical time and drive collaborative treatment plans.</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Search Mock Preview */}
+        <div className="feature-card-wrapper">
+          <div className="card-header-bar">
+            <div className="card-header-title">
+              <Icon name="search" />
+              <span>Evidence Search Preview</span>
+            </div>
+          </div>
+
+          <div className="search-mock-preview-box">
+            {/* Mock Search Bar */}
+            <div className="search-mock-input-row">
+              <div className="search-mock-input-field">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.3-4.3" />
+                </svg>
+                <span>{selectedTopic}</span>
+              </div>
+            </div>
+
+            {/* Quick Topic Chips */}
+            <div className="search-mock-topic-chips">
+              {Object.keys(sampleCardContent).map((topic) => (
+                <button
+                  key={topic}
+                  type="button"
+                  className={`search-mock-chip ${selectedTopic === topic ? 'active' : ''}`}
+                  onClick={() => setSelectedTopic(topic)}
+                >
+                  {topic}
+                </button>
+              ))}
+            </div>
+
+            {/* Sample Search Result Card */}
+            <div className="search-mock-card">
+              <div className="search-mock-card-header">
+                <span className="search-mock-category">{activeContent.category}</span>
+              </div>
+              <h4 className="search-mock-card-title">{activeContent.title}</h4>
+              <p className="search-mock-card-desc">{activeContent.desc}</p>
+              <div className="search-mock-card-takeaway">
+                <span className="takeaway-label">Clinician Conversation Point:</span>
+                <p>&ldquo;{activeContent.takeaway}&rdquo;</p>
+              </div>
+            </div>
+
+            {/* Locked Gate Notice */}
+            <div className="search-mock-lock-banner">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+              <span>Full literature search is reserved for signed-in members. Sign in or create an account to query the full clinical index.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* CTA Box */}
+      <section className="landing-cta-banner">
+        <ScrollReveal>
+          <h2>Unlock PMOS clinical literature and evidence search</h2>
+          <p>Join to access peer-reviewed clinical research and connect evidence directly with your personal health journal.</p>
+          <div className="landing-cta-actions">
+            <SignUpButton mode="modal">
+              <button type="button" className="hero-cta-btn">
+                <span>Create Free Account</span>
+                <Icon name="arrow" />
+              </button>
+            </SignUpButton>
+            <SignInButton mode="modal">
+              <button type="button" className="hero-explore-link">
+                <span>Sign In to Search</span>
               </button>
             </SignInButton>
           </div>

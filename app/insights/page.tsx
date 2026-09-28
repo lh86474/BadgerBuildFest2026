@@ -6,7 +6,7 @@ import { dateKey, emptyData } from "../../lib/health";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
-  title: "Health history | PCOS insights",
+  title: "Health history | PMOS insights",
   description: "Explore recorded health patterns and prepare a descriptive visit summary.",
 };
 

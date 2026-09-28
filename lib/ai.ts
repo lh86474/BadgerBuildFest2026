@@ -123,9 +123,9 @@ export class DevelopmentAIService implements AIService {
     if (/hi|hello|hey|greetings|who are you/.test(q)) {
       if (context && context.loggedDays > 0) {
         const topSymptom = context.symptoms[0]?.name;
-        interpretation = `Hello! I'm your PCOS companion, connected with your private journal (${context.loggedDays} ${context.loggedDays === 1 ? 'day' : 'days'} logged${topSymptom ? `, most frequently noting ${topSymptom.toLowerCase()}` : ''}). How can I help you today? You can ask about your symptoms, cycle patterns, or general PCOS management.`;
+        interpretation = `Hello! I'm your PMOS companion, connected with your private journal (${context.loggedDays} ${context.loggedDays === 1 ? 'day' : 'days'} logged${topSymptom ? `, most frequently noting ${topSymptom.toLowerCase()}` : ''}). How can I help you today? You can ask about your symptoms, cycle patterns, or general PMOS management.`;
       } else {
-        interpretation = 'Hello! Welcome to your PCOS health companion. I can answer questions about PCOS symptoms, cycle changes, nutrition, and health trends. As you log entries in the Track section, my answers will automatically reflect your personal data.';
+        interpretation = 'Hello! Welcome to your PMOS health companion. I can answer questions about PMOS symptoms, cycle changes, nutrition, and health trends. As you log entries in the Track section, my answers will automatically reflect your personal data.';
       }
     } else if (hasDoctorIntent) {
       if (/cycle|period|irregular/.test(q)) {
@@ -144,39 +144,39 @@ export class DevelopmentAIService implements AIService {
     } else if (/symptom|frequent|often|feel|common|trend/.test(q)) {
       if (context && context.symptoms.length > 0) {
         const top = context.symptoms.slice(0, 4).map(s => `**${s.name}** (${s.days} ${s.days === 1 ? 'day' : 'days'})`).join(', ');
-        interpretation = `Based on your recent logs, your most recorded symptoms are: ${top}.\n\nIn PCOS, tracking frequencies helps separate baseline chronic symptoms from cyclical flare-ups. For example, noting whether fatigue or bloating peaks in specific cycle phases helps determine whether metabolic factors or hormonal shifts are the primary driver.`;
+        interpretation = `Based on your recent logs, your most recorded symptoms are: ${top}.\n\nIn PMOS, tracking frequencies helps separate baseline chronic symptoms from cyclical flare-ups. For example, noting whether fatigue or bloating peaks in specific cycle phases helps determine whether metabolic factors or hormonal shifts are the primary driver.`;
       } else {
         interpretation = 'You have not logged any symptoms in the last 90 days yet. As you record your daily feelings in the Track section, I will automatically calculate your most frequent symptoms and highlight patterns.';
       }
     } else if (/fatigue|tired|exhaust|energy/.test(q)) {
-      interpretation = 'Fatigue is one of the most common yet under-discussed PCOS symptoms. It often stems from multiple overlapping factors: insulin resistance causing rapid blood sugar crashes, chronic low-grade inflammation, or disrupted sleep architecture. Tracking your energy levels alongside meals and sleep quality helps identify specific triggers.';
+      interpretation = 'Fatigue is one of the most common yet under-discussed PMOS symptoms. It often stems from multiple overlapping factors: insulin resistance causing rapid blood sugar crashes, chronic low-grade inflammation, or disrupted sleep architecture. Tracking your energy levels alongside meals and sleep quality helps identify specific triggers.';
     } else if (/cycle|period|bleed|irregular|flow|menstrua|ovulat/.test(q)) {
       if (context && context.periodStarts.length > 0) {
-        interpretation = `You have recorded **${context.periodStarts.length} period start(s)** in this 90-day window (most recently on ${context.periodStarts[context.periodStarts.length - 1]}).\n\nIn PCOS, irregular cycles (oligomenorrhea) are primarily driven by delayed or absent ovulation caused by elevated androgens or LH/FSH ratios. Keeping an ongoing record of bleeding duration and flow intensity provides invaluable diagnostic context.`;
+        interpretation = `You have recorded **${context.periodStarts.length} period start(s)** in this 90-day window (most recently on ${context.periodStarts[context.periodStarts.length - 1]}).\n\nIn PMOS, irregular cycles (oligomenorrhea) are primarily driven by delayed or absent ovulation caused by elevated androgens or LH/FSH ratios. Keeping an ongoing record of bleeding duration and flow intensity provides invaluable diagnostic context.`;
       } else {
-        interpretation = 'No period starts are currently logged in your journal for this 90-day window. In PCOS, cycle variability is very common. Logging start dates, spotting, and flow levels provides a concrete timeline for your clinician to assess ovulatory patterns.';
+        interpretation = 'No period starts are currently logged in your journal for this 90-day window. In PMOS, cycle variability is very common. Logging start dates, spotting, and flow levels provides a concrete timeline for your clinician to assess ovulatory patterns.';
       }
     } else if (/medication|metformin|pill|dose|supplement|spironolactone|birth control|side effect/.test(q)) {
       if (context && context.medications.length > 0) {
         const medList = context.medications.map(m => `**${m.name}** (started ${m.startedAt})`).join(', ');
         interpretation = `Your active medications in your journal: ${medList}.\n\nWhen starting or adjusting medications (such as Metformin for insulin sensitization or Spironolactone for androgen excess), monitoring changes in the first 2 to 4 weeks is key. Always discuss any dosage adjustments directly with your prescribing clinician.`;
       } else {
-        interpretation = 'You do not have any active medications recorded in your journal yet. Common PCOS medications include insulin-sensitizing agents (like Metformin), oral contraceptives for cycle regulation, and anti-androgens (like Spironolactone). You can track prescriptions and supplements in the Track section.';
+        interpretation = 'You do not have any active medications recorded in your journal yet. Common PMOS medications include insulin-sensitizing agents (like Metformin), oral contraceptives for cycle regulation, and anti-androgens (like Spironolactone). You can track prescriptions and supplements in the Track section.';
       }
     } else if (/lab|result|test|blood|hormone|a1c|glucose|testosterone|dhea|lipid/.test(q)) {
       if (context && context.labs.length > 0) {
         const labList = context.labs.map(l => `• **${l.name}**: ${l.value} ${l.unit} (reference range: ${l.low}–${l.high})`).join('\n');
-        interpretation = `Here are the lab results recorded in your journal:\n\n${labList}\n\nClinical lab values in PCOS should always be interpreted as a panel alongside your clinical symptoms, rather than as isolated numbers.`;
+        interpretation = `Here are the lab results recorded in your journal:\n\n${labList}\n\nClinical lab values in PMOS should always be interpreted as a panel alongside your clinical symptoms, rather than as isolated numbers.`;
       } else {
-        interpretation = 'No lab results are currently recorded in your journal. Typical PCOS lab panels evaluate total and free testosterone, DHEA-S, fasting glucose and insulin, HbA1c, and lipid panels. You can log dated results in the Track section.';
+        interpretation = 'No lab results are currently recorded in your journal. Typical PMOS lab panels evaluate total and free testosterone, DHEA-S, fasting glucose and insulin, HbA1c, and lipid panels. You can log dated results in the Track section.';
       }
     } else if (/snack|food|meal|diet|nutrition|eat|glucose|sugar/.test(q)) {
-      interpretation = 'Nutrition in PCOS is most effective when focused on blood sugar stabilization and reducing chronic inflammation:\n\n• **Pair carbohydrates with protein and fat**: Adding protein (eggs, Greek yogurt, tofu) and healthy fats (avocado, nuts) slows gastric emptying and prevents insulin spikes.\n• **Emphasize fiber**: Aim for 25–30g of daily fiber from vegetables, berries, and legumes to nourish the gut microbiome and help eliminate excess hormones.\n• **Consistent meal spacing**: Regular fueling prevents dramatic glucose dips that trigger fatigue and intense sugar cravings.';
+      interpretation = 'Nutrition in PMOS is most effective when focused on blood sugar stabilization and reducing chronic inflammation:\n\n• **Pair carbohydrates with protein and fat**: Adding protein (eggs, Greek yogurt, tofu) and healthy fats (avocado, nuts) slows gastric emptying and prevents insulin spikes.\n• **Emphasize fiber**: Aim for 25–30g of daily fiber from vegetables, berries, and legumes to nourish the gut microbiome and help eliminate excess hormones.\n• **Consistent meal spacing**: Regular fueling prevents dramatic glucose dips that trigger fatigue and intense sugar cravings.';
     } else if (/acne|skin|hair|hirsutism/.test(q)) {
-      interpretation = 'Dermatological symptoms in PCOS—such as cystic acne along the jawline, hirsutism (excess facial or body hair), and androgenic alopecia—are driven by elevated circulating androgens or increased 5-alpha reductase activity converting testosterone to DHT. Nutritional support for insulin sensitivity and targeted medical therapies (like Spironolactone or specific oral contraceptives) are common approaches to discuss with a dermatologist or endocrinologist.';
+      interpretation = 'Dermatological symptoms in PMOS—such as cystic acne along the jawline, hirsutism (excess facial or body hair), and androgenic alopecia—are driven by elevated circulating androgens or increased 5-alpha reductase activity converting testosterone to DHT. Nutritional support for insulin sensitivity and targeted medical therapies (like Spironolactone or specific oral contraceptives) are common approaches to discuss with a dermatologist or endocrinologist.';
     } else {
       // Dynamic freeform response
-      interpretation = `Regarding your question about "${question.trim()}":\n\nIn PCOS, bodily symptoms and endocrine signals are interconnected through hormonal, metabolic, and neuro-immune pathways.`;
+      interpretation = `Regarding your question about "${question.trim()}":\n\nIn PMOS, bodily symptoms and endocrine signals are interconnected through hormonal, metabolic, and neuro-immune pathways.`;
       if (context && context.loggedDays > 0) {
         interpretation += `\n\nYour journal contains ${context.loggedDays} ${context.loggedDays === 1 ? 'day' : 'days'} of data${context.symptoms.length > 0 ? ` with symptoms including ${context.symptoms.map(s => s.name).join(', ')}` : ''}. Reviewing how your symptoms change alongside lifestyle shifts will provide clearer personal insight.`;
       } else {

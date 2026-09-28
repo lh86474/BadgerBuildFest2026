@@ -71,17 +71,17 @@ export class DatabricksLakehouseAnalytics {
     }
 
     // 2. Mock / Evaluated Lakehouse Cohort Models
-    // Real clinical registry stats modeled from multi-center PCOS observational cohorts
+    // Real clinical registry stats modeled from multi-center PMOS observational cohorts
     if (/metformin|inositol|medication|pill|side effect/.test(qLower) || context?.medications.length) {
-      return 'Databricks Lakehouse Cohort Analysis (N=1,840 de-identified journal entries in Delta table `pcos_cohorts.treatment_adherence`): 64% of community members tracking insulin sensitizers reported gastrointestinal side effects stabilized within 21 days, and 58% noted initial cycle regularity improvements by month 3.';
+      return 'Databricks Lakehouse Cohort Analysis (N=1,840 de-identified journal entries in Delta table `pmos_cohorts.treatment_adherence`): 64% of community members tracking insulin sensitizers reported gastrointestinal side effects stabilized within 21 days, and 58% noted initial cycle regularity improvements by month 3.';
     }
 
     if (/fatigue|energy|tired|exhaust/.test(qLower)) {
-      return 'Databricks Lakehouse Cohort Analysis (N=3,210 de-identified logs in Delta table `pcos_cohorts.symptom_longitudinal`): 71% of tracked individuals who recorded protein-pairing at breakfast noted a 40% reduction in afternoon fatigue flare-ups within 4 weeks.';
+      return 'Databricks Lakehouse Cohort Analysis (N=3,210 de-identified logs in Delta table `pmos_cohorts.symptom_longitudinal`): 71% of tracked individuals who recorded protein-pairing at breakfast noted a 40% reduction in afternoon fatigue flare-ups within 4 weeks.';
     }
 
     if (/cycle|period|bleed|irregular|flow/.test(qLower) || context?.periodStarts.length) {
-      return 'Databricks Lakehouse Cohort Analysis (N=4,150 de-identified cycle logs in Delta table `pcos_cohorts.cycle_variability`): Among individuals with oligomenorrhea, 78% of users tracking consecutive cycles demonstrated distinct biphasic temperature or symptom patterns, helping their clinicians verify ovulatory status.';
+      return 'Databricks Lakehouse Cohort Analysis (N=4,150 de-identified cycle logs in Delta table `pmos_cohorts.cycle_variability`): Among individuals with oligomenorrhea, 78% of users tracking consecutive cycles demonstrated distinct biphasic temperature or symptom patterns, helping their clinicians verify ovulatory status.';
     }
 
     if (/snack|food|meal|diet|nutrition|eat|glucose|sugar/.test(qLower)) {

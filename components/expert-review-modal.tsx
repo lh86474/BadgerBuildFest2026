@@ -147,7 +147,7 @@ export function ExpertReviewModal({
           <div className={styles.safetyToggleWrap}>
             <div>
               <div className={styles.safetyLabel}>Clinical Safety Check</div>
-              <div className={styles.safetySub}>Is this response medically safe for a PCOS patient to read?</div>
+              <div className={styles.safetySub}>Is this response medically safe for a PMOS patient to read?</div>
             </div>
             <button
               type="button"

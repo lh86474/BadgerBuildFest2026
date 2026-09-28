@@ -109,11 +109,13 @@ export interface QuizAnswers {
   pastSupplements?: string;
 }
 
-export type PCOSPhenotype =
+export type PMOSPhenotype =
   | 'Phenotype A'
   | 'Phenotype B'
   | 'Phenotype C'
   | 'Phenotype D';
+
+export type PCOSPhenotype = PMOSPhenotype;
 
 export type OvulatoryPillar =
   | 'True Anovulation Pattern'
@@ -138,7 +140,7 @@ export interface DriverScores {
 }
 
 export interface QuizResult {
-  phenotype: PCOSPhenotype;
+  phenotype: PMOSPhenotype;
   phenotypeTitle: string;
   phenotypeSubtitle: string;
   phenotypeDescription: string;

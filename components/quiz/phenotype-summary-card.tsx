@@ -24,7 +24,7 @@ export function PhenotypeSummaryCard({
         <div className={styles.onboardingCard}>
           <div>
             <h3 className={styles.dashboardTitle}>
-              {userName ? `Welcome, ${userName}. Uncover your PCOS phenotype` : 'Uncover your PCOS phenotype & cycle mechanics'}
+              {userName ? `Welcome, ${userName}. Uncover your PMOS phenotype` : 'Uncover your PMOS phenotype & cycle mechanics'}
             </h3>
             <p className={styles.questionHint} style={{ maxWidth: 540, marginTop: 6, marginBottom: 0 }}>
               Complete the 6-part clinical questionnaire to identify your primary ovulatory pillar (true anovulation, hypothalamic amenorrhea, or post-pill transition) and discover your personalized profile.

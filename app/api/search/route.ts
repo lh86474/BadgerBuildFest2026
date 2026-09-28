@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { auth } from '@clerk/nextjs/server';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,49 +16,49 @@ export interface SymptomSearchResult {
 const CURATED_SYMPTOM_CORPUS: SymptomSearchResult[] = [
   {
     id: 'sym-1',
-    disease: 'Polycystic Ovary Syndrome (PCOS)',
+    disease: 'PMOS',
     symptom: 'Irregular Menstrual Cycles & Anovulation',
     description: 'Infrequent (oligomenorrhea) or absent (amenorrhea) menstrual bleeding caused by altered hypothalamic-pituitary-ovarian signaling and hyperandrogenism.',
     category: 'Reproductive & Hormonal',
   },
   {
     id: 'sym-2',
-    disease: 'Polycystic Ovary Syndrome (PCOS)',
+    disease: 'PMOS',
     symptom: 'Insulin Resistance & Reactive Hypoglycemia',
     description: 'Impaired cellular response to insulin leading to compensatory hyperinsulinemia, postprandial glucose swings, sweet cravings, and energy crashes.',
     category: 'Metabolic',
   },
   {
     id: 'sym-3',
-    disease: 'Polycystic Ovary Syndrome (PCOS)',
+    disease: 'PMOS',
     symptom: 'Hirsutism & Androgen Excess',
     description: 'Coarse dark hair growth in male-pattern distribution (chin, upper lip, chest, abdomen) driven by elevated free testosterone and DHT.',
     category: 'Dermatological & Androgenic',
   },
   {
     id: 'sym-4',
-    disease: 'Polycystic Ovary Syndrome (PCOS)',
+    disease: 'PMOS',
     symptom: 'Cystic Jawline Acne',
     description: 'Persistent inflammatory or cystic acne predominantly located on the lower third of the face, jawline, and neck, resistant to topical treatments.',
     category: 'Dermatological',
   },
   {
     id: 'sym-5',
-    disease: 'Polycystic Ovary Syndrome (PCOS)',
+    disease: 'PMOS',
     symptom: 'Chronic Fatigue & Sleep Architecture Disruption',
     description: 'Persistent daytime exhaustion resulting from fragmented REM sleep, high nocturnal cortisol, and blunted glucose utilization.',
     category: 'Neuro-Metabolic',
   },
   {
     id: 'sym-6',
-    disease: 'Polycystic Ovary Syndrome (PCOS)',
+    disease: 'PMOS',
     symptom: 'Acanthosis Nigricans & Skin Tags',
     description: 'Velvety, hyperpigmented skin patches in intertriginous flexural folds (neck, axillae, groin) directly correlating with severe hyperinsulinemia.',
     category: 'Metabolic & Skin',
   },
   {
     id: 'sym-7',
-    disease: 'Polycystic Ovary Syndrome (PCOS)',
+    disease: 'PMOS',
     symptom: 'Central Adiposity & Difficulty Losing Weight',
     description: 'Visceral abdominal fat distribution perpetuated by insulin resistance, chronic low-grade inflammation, and leptin resistance.',
     category: 'Metabolic',
@@ -66,6 +67,14 @@ const CURATED_SYMPTOM_CORPUS: SymptomSearchResult[] = [
 
 export async function POST(request: Request) {
   try {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'Unauthorized: Literature & symptom search is reserved for signed-in users.' },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json().catch(() => ({}));
     const query = typeof body.query === 'string' ? body.query.trim() : '';
     const limit = typeof body.limit === 'number' && body.limit > 0 ? Math.min(body.limit, 20) : 6;
@@ -115,7 +124,7 @@ export async function POST(request: Request) {
 
           const results: SymptomSearchResult[] = rows.map((row, idx) => ({
             id: String(row[idIdx] ?? `res-${idx}`),
-            disease: row[diseaseIdx] ? String(row[diseaseIdx]) : 'PCOS Research',
+            disease: row[diseaseIdx] ? String(row[diseaseIdx]) : 'PMOS Research',
             symptom: row[symptomIdx] ? String(row[symptomIdx]) : query,
             description: String(row[descIdx] ?? row[1] ?? ''),
             category: row[catIdx] ? String(row[catIdx]) : undefined,

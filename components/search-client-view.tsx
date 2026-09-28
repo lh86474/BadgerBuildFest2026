@@ -35,7 +35,7 @@ export function SearchClientView() {
   const [activePreset, setActivePreset] = useState<string>('');
 
   const handleSelectSymptom = (symptom: string) => {
-    const prompt = `What clinical insights and clinician questions should I know about ${symptom} in PCOS?`;
+    const prompt = `What clinical insights and clinician questions should I know about ${symptom} in PMOS?`;
     router.push(`/ask?q=${encodeURIComponent(prompt)}`);
   };
 
@@ -61,7 +61,7 @@ export function SearchClientView() {
               <span className="search-hero-tag">Clinical Knowledge Base</span>
               <h1 className="search-hero-title">Search Symptoms &amp; Evidence</h1>
               <p className="search-hero-subtitle">
-                Explore evidence-informed PCOS research, symptom correlations, and clinical mechanisms powered by
+                Explore evidence-informed PMOS research, symptom correlations, and clinical mechanisms powered by
                 the Databricks Lakehouse Vector Search engine.
               </p>
             </div>
@@ -73,7 +73,7 @@ export function SearchClientView() {
           <SymptomSearch
             key={activePreset}
             defaultQuery={activePreset}
-            title="PCOS Symptom & Literature Search"
+            title="PMOS Symptom & Literature Search"
             subtitle="Search symptoms and clinical evidence indexed with Databricks Unity Catalog and Vector Search."
             onSelectSymptom={handleSelectSymptom}
           />
@@ -126,8 +126,8 @@ export function SearchClientView() {
           <div className="evidence-footer-text">
             <h3>Evidence-Informed Care Preparation</h3>
             <p>
-              This search space indexes peer-reviewed clinical research and consensus PCOS literature (such as the
-              International Evidence-based Guideline for PCOS). It is designed to help you prepare clear, structured
+              This search space indexes peer-reviewed clinical research and consensus PMOS literature (such as the
+              International Evidence-based Guideline for PMOS). It is designed to help you prepare clear, structured
               questions for medical appointments rather than providing a diagnostic conclusion.
             </p>
           </div>

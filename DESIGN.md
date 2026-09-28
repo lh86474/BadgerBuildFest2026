@@ -2,7 +2,7 @@
 
 ## Product
 
-This product is a private PCOS health companion designed to help users understand patterns in their symptoms over time.
+This product is a private PMOS health companion designed to help users understand patterns in their symptoms over time.
 
 The app helps users:
 
@@ -23,7 +23,7 @@ It should not present itself as a diagnostic tool or replace professional medica
 
 # Core Product Story
 
-PCOS symptoms can look very different from person to person.
+PMOS symptoms can look very different from person to person.
 
 Symptoms such as irregular periods, acne, fatigue, hair changes, pain, mood changes, and weight changes may appear individually and may be attributed to unrelated causes.
 
@@ -58,7 +58,7 @@ Avoid reducing a user's health to a single score.
 
 Do not create:
 
-- PCOS probability scores
+- PMOS probability scores
 - overall health scores
 - symptom grades
 - gamified health rankings
@@ -80,7 +80,7 @@ Use neutral language such as:
 Avoid language such as:
 
 - "Warning: abnormal"
-- "You likely have PCOS"
+- "You likely have PMOS"
 - "Your symptoms indicate..."
 - "Your health is getting worse"
 
@@ -165,7 +165,7 @@ Prefer strong information hierarchy over decorative UI.
 
 # Color
 
-Use a warm, neutral foundation. Emphasize teal because it is the official color for PCOS awareness.
+Use a warm, neutral foundation. Emphasize teal because it is the official color for PMOS awareness.
 Please use #3368A0, #66A3BF, #C8DFDB, #F2EFE7. Please emphasize teal as the main color
 
 Recommended visual structure:

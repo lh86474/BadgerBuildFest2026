@@ -193,7 +193,7 @@ export class DatabricksAIService implements AIService, DatabricksModelServing {
         const cleanHost = host.replace(/\/+$/, '');
         const invocationUrl = `${cleanHost}/serving-endpoints/${encodeURIComponent(endpoint)}/invocations`;
 
-        const systemPrompt = `You are an empathetic, clinical-grade PCOS health companion powered by Databricks AI.
+        const systemPrompt = `You are an empathetic, clinical-grade PMOS health companion powered by Databricks AI.
 You have direct access to the user's private, de-identified health journal context (recent daily logs, symptoms, cycle starts, medications, and labs).
 
 INSTRUCTIONS:
@@ -355,27 +355,27 @@ ${fewShotText}`;
     // Greetings
     if (/hi|hello|hey|greetings|who are you/.test(qLower)) {
       if (context && context.loggedDays > 0) {
-        interpretation = `Hello! I'm your PCOS companion powered by **Databricks AI & Lakehouse**. I have integrated context from your private journal (${context.loggedDays} logged ${context.loggedDays === 1 ? 'day' : 'days'}) alongside clinical literature in Unity Catalog. How can I help you today? You can ask about symptom triggers, cycle changes, or questions to prepare for your next clinician visit.`;
+        interpretation = `Hello! I'm your PMOS companion powered by **Databricks AI & Lakehouse**. I have integrated context from your private journal (${context.loggedDays} logged ${context.loggedDays === 1 ? 'day' : 'days'}) alongside clinical literature in Unity Catalog. How can I help you today? You can ask about symptom triggers, cycle changes, or questions to prepare for your next clinician visit.`;
       } else {
-        interpretation = `Hello! Welcome to your PCOS companion, powered by **Databricks Model Serving & Vector Search**. You can ask questions about hormonal balance, nutrition, medication mechanisms, and cycle variability. As you log entries in the Track section, my answers will automatically incorporate your real trends.`;
+        interpretation = `Hello! Welcome to your PMOS companion, powered by **Databricks Model Serving & Vector Search**. You can ask questions about hormonal balance, nutrition, medication mechanisms, and cycle variability. As you log entries in the Track section, my answers will automatically incorporate your real trends.`;
       }
     }
     // Fatigue / Energy
     else if (/fatigue|energy|tired|exhaust/.test(qLower)) {
-      interpretation = `Fatigue in PCOS is multifaceted, frequently driven by reactive hypoglycemia from insulin resistance, elevated nocturnal cortisol, and fragmented sleep architecture.
+      interpretation = `Fatigue in PMOS is multifaceted, frequently driven by reactive hypoglycemia from insulin resistance, elevated nocturnal cortisol, and fragmented sleep architecture.
 
 According to retrieved clinical research from *The Lancet* and *Sleep Medicine Reviews*:
 • **Insulin Resistance & Cellular Energy**: Post-meal glucose spikes trigger compensatory hyperinsulinemia, leading to rapid subsequent blood sugar dips that present as intense midday exhaustion.
-• **Sleep Disruption**: Women with PCOS exhibit a significantly higher incidence of upper-airway resistance and REM fragmentation, independent of body mass index.
+• **Sleep Disruption**: Women with PMOS exhibit a significantly higher incidence of upper-airway resistance and REM fragmentation, independent of body mass index.
 • **Actionable Strategy**: Pairing carbohydrate intake with 20–30g of bioavailable protein and complex fats blunts insulin surges by up to 34%, fostering sustained cellular energy.`;
       clinician = 'Could we evaluate fasting insulin alongside glucose (to calculate HOMA-IR), and explore whether sleep fragmentation or nocturnal cortisol might be driving my chronic exhaustion?';
     }
     // Irregular Cycles & Ovulation
     else if (/cycle|period|bleed|irregular|flow|menstrua|ovulat/.test(qLower)) {
       const recordedCount = context?.periodStarts.length ?? 0;
-      interpretation = `In PCOS, irregular cycles (oligomenorrhea) or absent cycles (amenorrhea) typically stem from hyperandrogenism and an elevated LH/FSH ratio, which impede the development and release of a dominant follicle.
+      interpretation = `In PMOS, irregular cycles (oligomenorrhea) or absent cycles (amenorrhea) typically stem from hyperandrogenism and an elevated LH/FSH ratio, which impede the development and release of a dominant follicle.
 
-Clinical literature highlighted in the *2023 International PCOS Guidelines* emphasizes:
+Clinical literature highlighted in the *2023 International PMOS Guidelines* emphasizes:
 • **Endometrial Safety**: If spontaneous withdrawal bleeding does not occur within 90 days, clinical guidelines recommend medical induction (e.g., short-course progestin) to protect the endometrial lining.
 • **Ovulatory Tracking**: Tracking bleeding duration, spotting, and cervical fluid over 3+ consecutive cycles provides essential phenotypic data to differentiate ovulatory versus anovulatory cycles.`;
       if (recordedCount > 0) {
@@ -385,7 +385,7 @@ Clinical literature highlighted in the *2023 International PCOS Guidelines* emph
     }
     // Medications & Supplements (Metformin, Inositol, Spironolactone)
     else if (/medication|metformin|inositol|spironolactone|birth control|pill|dose|side effect/.test(qLower)) {
-      interpretation = `Medication management in PCOS targets specific phenotypic drivers: metabolic dysregulation, androgen excess, or menstrual irregularity.
+      interpretation = `Medication management in PMOS targets specific phenotypic drivers: metabolic dysregulation, androgen excess, or menstrual irregularity.
 
 Key insights from *The Lancet Diabetes & Endocrinology* comparative trials:
 • **Metformin vs. Myo-Inositol**: Both therapies significantly enhance peripheral insulin sensitivity and ovulatory frequency over 24 weeks. While Metformin has robust clinical validation for metabolic endpoints, patients on Myo-Inositol reported fewer gastrointestinal side effects (6% vs 38%).
@@ -395,7 +395,7 @@ Key insights from *The Lancet Diabetes & Endocrinology* comparative trials:
     }
     // Food & Nutrition
     else if (/snack|food|meal|diet|nutrition|eat|glucose|sugar/.test(qLower)) {
-      interpretation = `Nutritional strategies in PCOS are most effective when designed around glycemic stabilization and reducing chronic low-grade inflammation.
+      interpretation = `Nutritional strategies in PMOS are most effective when designed around glycemic stabilization and reducing chronic low-grade inflammation.
 
 Evidence-based guidelines published in *The American Journal of Clinical Nutrition* recommend:
 • **Macronutrient Anchoring**: Never consume "naked" carbohydrates. Anchoring carbs with at least 15–20g of protein (Greek yogurt, eggs, tempeh) and healthy fats (seeds, nuts, olive oil) delays gastric emptying and prevents reactive insulin spikes.
@@ -405,7 +405,7 @@ Evidence-based guidelines published in *The American Journal of Clinical Nutriti
     }
     // Acne / Hair / Androgens
     else if (/acne|hair|hirsutism|skin|alopecia/.test(qLower)) {
-      interpretation = `Dermatological manifestations in PCOS—cystic jawline acne, hirsutism, and hair thinning—result from heightened androgen receptor sensitivity and increased 5-alpha reductase activity converting testosterone into more potent DHT.
+      interpretation = `Dermatological manifestations in PMOS—cystic jawline acne, hirsutism, and hair thinning—result from heightened androgen receptor sensitivity and increased 5-alpha reductase activity converting testosterone into more potent DHT.
 
 Clinical consensus from the *British Journal of Dermatology*:
 • **Systemic vs. Topical**: Topical treatments alone often underperform because the underlying driver is systemic hormonal signaling.
@@ -414,7 +414,7 @@ Clinical consensus from the *British Journal of Dermatology*:
     }
     // Weight & Metabolic Regulation
     else if (/weight|gain|loss|scale|pound|lbs|kg|heavy|fat/.test(qLower)) {
-      interpretation = `Weight regulation in PCOS is closely linked to metabolic and endocrine pathways rather than simple caloric mathematics. Elevated fasting insulin impairs lipolysis (fat breakdown) and promotes lipid storage, while cyclical progesterone and aldosterone fluctuations frequently cause 2 to 5 pounds of water retention during the luteal phase.
+      interpretation = `Weight regulation in PMOS is closely linked to metabolic and endocrine pathways rather than simple caloric mathematics. Elevated fasting insulin impairs lipolysis (fat breakdown) and promotes lipid storage, while cyclical progesterone and aldosterone fluctuations frequently cause 2 to 5 pounds of water retention during the luteal phase.
 
 Key clinical findings from *The Journal of Clinical Endocrinology & Metabolism*:
 • **Insulin-Driven Metabolic Resistance**: Hyperinsulinemia directly inhibits SHBG production, increasing bioactive free androgens and favoring abdominal fat storage while blunting postprandial fat oxidation.
@@ -436,7 +436,7 @@ Focusing your discussion on measurable patterns:
     }
     // Freeform
     else {
-      interpretation = `Regarding "${question.trim()}": In PCOS, symptoms reflect interconnected metabolic, neuro-endocrine, and ovarian signaling pathways.
+      interpretation = `Regarding "${question.trim()}": In PMOS, symptoms reflect interconnected metabolic, neuro-endocrine, and ovarian signaling pathways.
 
 Analyzing your health history alongside peer-reviewed guidelines from Databricks Vector Search:
 • Individual symptoms like cycle variability, skin changes, and energy fluctuations often share common root factors like insulin resistance or androgen balance.

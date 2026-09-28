@@ -26,7 +26,7 @@ export const QUIZ_SECTIONS: QuizSectionConfig[] = [
     id: 1,
     title: 'Cycle Mechanics & Ovulatory History',
     subtitle: 'Section 1 of 6',
-    goal: 'Distinguish between true anovulation, hypothalamic amenorrhea, and post-pill synthetic hormone transitions and assign to 1 of 4 PCOS phenotypes.',
+    goal: 'Distinguish between true anovulation, hypothalamic amenorrhea, and post-pill synthetic hormone transitions and assign to 1 of 4 PMOS phenotypes.',
   },
   {
     id: 2,
@@ -44,7 +44,7 @@ export const QUIZ_SECTIONS: QuizSectionConfig[] = [
     id: 4,
     title: 'Neuro-Adrenal & Autonomic Stress Signaling',
     subtitle: 'Section 4 of 6',
-    goal: 'Detect Adrenal PCOS / High DHEA-S drivers triggered by HPA-axis dysfunction.',
+    goal: 'Detect Adrenal PMOS / High DHEA-S drivers triggered by HPA-axis dysfunction.',
   },
   {
     id: 5,

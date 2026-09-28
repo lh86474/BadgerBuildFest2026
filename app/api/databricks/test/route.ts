@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
-  const sampleQuery = url.searchParams.get('q') || 'What snacks and meal patterns support PCOS blood sugar balance?';
+  const sampleQuery = url.searchParams.get('q') || 'What snacks and meal patterns support PMOS blood sugar balance?';
   const forceMock = url.searchParams.get('mock') === 'true';
 
   const startTime = Date.now();

@@ -11,12 +11,12 @@ type SymptomSuggestion = {
 const SYMPTOM_SUGGESTIONS: Record<string, SymptomSuggestion> = {
   // Commonly tracked
   'Fatigue': {
-    treatment: `Treatment approaches for PCOS-related fatigue:
+    treatment: `Treatment approaches for PMOS-related fatigue:
 
 • **Insulin Sensitizers**: Metformin (1500-2000mg/day) or Myo-Inositol (4g/day) can improve cellular energy by addressing insulin resistance
 • **Iron Supplementation**: If ferritin levels are below 50 ng/mL, iron therapy may significantly reduce fatigue
-• **Thyroid Evaluation**: Request TSH, Free T3, and Free T4 testing, as subclinical hypothyroidism is more common in PCOS
-• **Sleep Study**: Consider evaluation for sleep apnea, which affects 30-40% of women with PCOS`,
+• **Thyroid Evaluation**: Request TSH, Free T3, and Free T4 testing, as subclinical hypothyroidism is more common in PMOS
+• **Sleep Study**: Consider evaluation for sleep apnea, which affects 30-40% of women with PMOS`,
     lifestyle: `✓ Pair complex carbs with 20-30g protein at each meal to prevent blood sugar crashes
 ✓ Aim for 7-9 hours of sleep in a cool, dark room
 ✓ Try 20-30 minutes of moderate movement daily (walking, yoga) to boost mitochondrial function
@@ -24,7 +24,7 @@ const SYMPTOM_SUGGESTIONS: Record<string, SymptomSuggestion> = {
 ✓ Stay hydrated with 8-10 glasses of water daily`,
   },
   'Pelvic pain': {
-    treatment: `Treatment options for pelvic pain in PCOS:
+    treatment: `Treatment options for pelvic pain in PMOS:
 
 • **Hormonal Management**: Birth control pills can reduce ovarian volume and stabilize endometrial buildup
 • **Anti-inflammatory Medications**: NSAIDs during acute pain episodes
@@ -49,7 +49,7 @@ const SYMPTOM_SUGGESTIONS: Record<string, SymptomSuggestion> = {
 ✓ Get 7-8 hours of sleep, as sleep deprivation intensifies cravings`,
   },
   'Bloating': {
-    treatment: `Addressing bloating in PCOS:
+    treatment: `Addressing bloating in PMOS:
 
 • **Digestive Enzymes**: May help with carbohydrate and protein digestion
 • **Probiotics**: Lactobacillus and Bifidobacterium strains support gut microbiome balance
@@ -61,7 +61,7 @@ const SYMPTOM_SUGGESTIONS: Record<string, SymptomSuggestion> = {
 ✓ Drink peppermint or ginger tea to soothe digestive discomfort`,
   },
   'Headache': {
-    treatment: `Treatment for hormonal headaches in PCOS:
+    treatment: `Treatment for hormonal headaches in PMOS:
 
 • **Magnesium Supplementation**: 400-600mg daily (glycinate form) can reduce headache frequency
 • **Continuous Hormonal Contraception**: May stabilize hormone fluctuations that trigger migraines
@@ -73,7 +73,7 @@ const SYMPTOM_SUGGESTIONS: Record<string, SymptomSuggestion> = {
 ✓ Reduce screen time and blue light exposure in evenings`,
   },
   'Acne': {
-    treatment: `Evidence-based acne treatment in PCOS:
+    treatment: `Evidence-based acne treatment in PMOS:
 
 • **Anti-Androgens**: Spironolactone (50-150mg daily) blocks androgen receptors in the skin
 • **Combined Oral Contraceptives**: Specific formulations (drospirenone, norgestimate) reduce free testosterone
@@ -100,7 +100,7 @@ const SYMPTOM_SUGGESTIONS: Record<string, SymptomSuggestion> = {
 ✓ Consider zinc-rich foods (pumpkin seeds, chickpeas) to support skin health`,
   },
   'Dry skin': {
-    treatment: `Addressing dry skin in PCOS:
+    treatment: `Addressing dry skin in PMOS:
 
 • **Thyroid Testing**: Rule out hypothyroidism
 • **Ceramide-Based Moisturizers**: Repair skin barrier function
@@ -112,7 +112,7 @@ const SYMPTOM_SUGGESTIONS: Record<string, SymptomSuggestion> = {
 ✓ Include healthy fats in your diet (avocado, olive oil, nuts)`,
   },
   'Hair loss': {
-    treatment: `Treatment for androgenic alopecia in PCOS:
+    treatment: `Treatment for androgenic alopecia in PMOS:
 
 • **Spironolactone**: 100-200mg daily to block DHT at hair follicles
 • **Minoxidil 5%**: Topical application to stimulate hair regrowth
@@ -135,7 +135,7 @@ const SYMPTOM_SUGGESTIONS: Record<string, SymptomSuggestion> = {
 ✓ Cosmetic removal options: threading, waxing, depilatory creams
 ✓ Reduce refined carbohydrates to lower insulin-driven androgens
 ✓ Track hair growth patterns to monitor treatment effectiveness
-✓ Consider working with an endocrinologist specialized in PCOS`,
+✓ Consider working with an endocrinologist specialized in PMOS`,
   },
   'Rash or itching': {
     treatment: `Addressing skin irritation:
@@ -152,7 +152,7 @@ const SYMPTOM_SUGGESTIONS: Record<string, SymptomSuggestion> = {
 
   // Mood & thinking
   'Mood changes': {
-    treatment: `Mood stabilization in PCOS:
+    treatment: `Mood stabilization in PMOS:
 
 • **SSRIs**: Sertraline or escitalopram for mood regulation
 • **Hormonal Contraception**: Can stabilize mood swings caused by hormonal fluctuations
@@ -162,10 +162,10 @@ const SYMPTOM_SUGGESTIONS: Record<string, SymptomSuggestion> = {
 ✓ Practice mindfulness or meditation daily
 ✓ Maintain consistent sleep schedule
 ✓ Limit alcohol, which can worsen mood instability
-✓ Connect with supportive friends, family, or PCOS communities`,
+✓ Connect with supportive friends, family, or PMOS communities`,
   },
   'Anxiety or stress': {
-    treatment: `Managing anxiety in PCOS:
+    treatment: `Managing anxiety in PMOS:
 
 • **SSRIs/SNRIs**: First-line medications for generalized anxiety
 • **Therapy**: CBT or acceptance and commitment therapy (ACT)
@@ -189,7 +189,7 @@ const SYMPTOM_SUGGESTIONS: Record<string, SymptomSuggestion> = {
 ✓ Prioritize adequate sleep—irritability worsens with sleep deprivation`,
   },
   'Low mood': {
-    treatment: `Treatment for depression symptoms in PCOS:
+    treatment: `Treatment for depression symptoms in PMOS:
 
 • **SSRIs**: Evidence-based first-line treatment
 • **Bupropion**: May be preferred if fatigue is prominent
@@ -228,9 +228,9 @@ const SYMPTOM_SUGGESTIONS: Record<string, SymptomSuggestion> = {
 
   // Sleep & temperature
   'Sleep problems': {
-    treatment: `Improving sleep in PCOS:
+    treatment: `Improving sleep in PMOS:
 
-• **Sleep Study**: Screen for sleep apnea, common in PCOS
+• **Sleep Study**: Screen for sleep apnea, common in PMOS
 • **Melatonin**: 0.5-3mg, 30 minutes before bed
 • **CBT for Insomnia (CBT-I)**: Evidence-based therapy for chronic sleep issues
 • **Magnesium Glycinate**: 400mg before bed supports relaxation`,
@@ -266,7 +266,7 @@ const SYMPTOM_SUGGESTIONS: Record<string, SymptomSuggestion> = {
 
   // Digestive
   'Nausea': {
-    treatment: `Managing nausea in PCOS:
+    treatment: `Managing nausea in PMOS:
 
 • **Rule Out Pregnancy**: First step if menstruating
 • **Metformin Side Effects**: If recently started, consider extended-release formulation
@@ -317,7 +317,7 @@ const SYMPTOM_SUGGESTIONS: Record<string, SymptomSuggestion> = {
   'Stomach pain': {
     treatment: `Addressing abdominal pain:
 
-• **Evaluation**: Differentiate between gastritis, IBS, or PCOS-related causes
+• **Evaluation**: Differentiate between gastritis, IBS, or PMOS-related causes
 • **Antacids or PPIs**: For acid-related pain
 • **Antispasmodics**: For cramping pain`,
     lifestyle: `✓ Avoid trigger foods (spicy, acidic, fatty)
@@ -341,7 +341,7 @@ const SYMPTOM_SUGGESTIONS: Record<string, SymptomSuggestion> = {
 
   // Pain & body
   'Migraine': {
-    treatment: `Migraine management in PCOS:
+    treatment: `Migraine management in PMOS:
 
 • **Triptans**: Sumatriptan or rizatriptan for acute attacks
 • **Preventive Medications**: Topiramate, propranolol, or amitriptyline
@@ -457,7 +457,7 @@ export async function POST(request: Request) {
 
     // If multiple symptoms, mention them in the response
     if (symptoms.length > 1) {
-      const additionalNote = `\n\nYou've also logged: ${symptoms.slice(1).join(', ')}. Each symptom can be addressed individually or as part of a comprehensive PCOS management plan.`;
+      const additionalNote = `\n\nYou've also logged: ${symptoms.slice(1).join(', ')}. Each symptom can be addressed individually or as part of a comprehensive PMOS management plan.`;
       return NextResponse.json({
         treatment: suggestion.treatment + additionalNote,
         lifestyle: suggestion.lifestyle,

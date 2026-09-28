@@ -11,7 +11,7 @@ interface SymptomSearchProps {
   defaultQuery?: string;
 }
 
-const POPULAR_PCOS_SYMPTOMS = [
+const POPULAR_PMOS_SYMPTOMS = [
   'Irregular or missed periods',
   'Insulin resistance & sugar cravings',
   'Facial hair growth (hirsutism)',
@@ -22,7 +22,7 @@ const POPULAR_PCOS_SYMPTOMS = [
 
 export function SymptomSearch({
   onSelectSymptom,
-  title = 'PCOS Symptom & Literature Search',
+  title = 'PMOS Symptom & Literature Search',
   subtitle = 'Search symptoms and clinical evidence powered by Databricks Vector Search and Lakehouse index.',
   defaultQuery = '',
 }: SymptomSearchProps) {
@@ -83,7 +83,7 @@ export function SymptomSearch({
   }
 
   function handleCopy(result: SymptomSearchResult) {
-    const text = `Symptom: ${result.symptom}\nContext: ${result.disease || 'PCOS'}\nClinical details: ${result.description}`;
+    const text = `Symptom: ${result.symptom}\nContext: ${result.disease || 'PMOS'}\nClinical details: ${result.description}`;
     navigator.clipboard?.writeText(text);
     setCopiedId(result.id);
     setTimeout(() => setCopiedId(null), 2000);
@@ -92,13 +92,6 @@ export function SymptomSearch({
   return (
     <section className="symptom-search-container" aria-labelledby="symptom-search-heading">
       <div className="symptom-search-header">
-        <div className="symptom-search-meta-tag">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
-            <circle cx="11" cy="11" r="8" />
-            <path d="m21 21-4.3-4.3" />
-          </svg>
-          <span>Databricks Lakehouse Vector Index</span>
-        </div>
         <h2 id="symptom-search-heading" className="symptom-search-title">
           {title}
         </h2>
@@ -113,7 +106,7 @@ export function SymptomSearch({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search symptoms, e.g. irregular cycles, fatigue, hirsutism..."
-            aria-label="Search PCOS symptoms and clinical evidence"
+            aria-label="Search PMOS symptoms and clinical evidence"
           />
           {query && (
             <button
@@ -140,7 +133,7 @@ export function SymptomSearch({
       <div>
         <div className="symptom-chips-label">Common topics to explore:</div>
         <div className="symptom-chips-list">
-          {POPULAR_PCOS_SYMPTOMS.map((sym) => (
+          {POPULAR_PMOS_SYMPTOMS.map((sym) => (
             <button
               key={sym}
               type="button"

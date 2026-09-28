@@ -14,7 +14,7 @@ const starterSuggestions = [
   'What symptoms have I logged most frequently?',
   'What questions should I ask my doctor about irregular cycles?',
   'What should I discuss about medication changes and side effects?',
-  'What snacks and meal patterns support PCOS blood sugar balance?',
+  'What snacks and meal patterns support PMOS blood sugar balance?',
 ];
 
 function cleanDisplaySyntax(text: string): string {
@@ -333,7 +333,7 @@ export default function Ask({
                   <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="var(--teal)" stroke="none" />
                 </svg>
               </div>
-              <h2 className={styles.welcomeTitle}>Welcome to your PCOS companion</h2>
+              <h2 className={styles.welcomeTitle}>Welcome to your PMOS companion</h2>
               <p className={styles.welcomeText}>
                 I can help synthesize your recorded symptoms, cycle patterns, and medications to help you prepare for discussions with your care team.
               </p>
@@ -396,7 +396,7 @@ export default function Ask({
 
                 <div className={styles.assistantBody}>
                   <div className={styles.assistantHeader}>
-                    <span className={styles.assistantName}>PCOS Companion</span>
+                    <span className={styles.assistantName}>PMOS Companion</span>
                     <span className={styles.messageTime}>{message.timestamp}</span>
                   </div>
 
@@ -510,7 +510,7 @@ export default function Ask({
                           type="button"
                           className={styles.expertReviewButton}
                           onClick={() => {
-                            const userQ = message.question || messages.slice(0, idx).reverse().find((m) => m.role === 'user')?.question || 'PCOS Inquiry';
+                            const userQ = message.question || messages.slice(0, idx).reverse().find((m) => m.role === 'user')?.question || 'PMOS Inquiry';
                             const fullAIResponse = interpretationSection?.text || '';
                             setReviewTarget({
                               messageId: message.id,
@@ -574,7 +574,7 @@ export default function Ask({
                 disabled={pending}
                 placeholder="Ask about your symptoms, cycles, or care..."
                 className={styles.chatInput}
-                aria-label="Ask your PCOS companion a question"
+                aria-label="Ask your PMOS companion a question"
               />
 
               <div className={styles.composerActions}>

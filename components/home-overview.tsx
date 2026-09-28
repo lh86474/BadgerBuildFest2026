@@ -54,10 +54,12 @@ function LoadedHomeOverview(props: Props) {
 
   useEffect(() => {
     if (!isLoaded || !isSignedIn) return;
-    const alreadyAutoShown = typeof window !== 'undefined' && sessionStorage.getItem('pcos-quiz-auto-shown');
+    const alreadyAutoShown =
+      typeof window !== 'undefined' &&
+      (sessionStorage.getItem('pmos-quiz-auto-shown') || sessionStorage.getItem('pcos-quiz-auto-shown'));
     if (!quizResult && !alreadyAutoShown) {
       if (typeof window !== 'undefined') {
-        sessionStorage.setItem('pcos-quiz-auto-shown', 'true');
+        sessionStorage.setItem('pmos-quiz-auto-shown', 'true');
       }
       setAutoQuizOpen(true);
     }

@@ -1,12 +1,12 @@
 # PHASE — Your Health, In Context
 
-> A calm, intelligent clinical companion and longitudinal tracking platform designed to bridge the gap between patients managing Polycystic Ovary Syndrome (PCOS) and evidence-based clinical care. Built with Next.js, Databricks Mosaic AI, and Clerk.
+> A calm, intelligent clinical companion and longitudinal tracking platform designed to bridge the gap between patients managing Polycystic Ovary Syndrome (PMOS) and evidence-based clinical care. Built with Next.js, Databricks Mosaic AI, and Clerk.
 
 ---
 
 ## Overview
 
-Polycystic Ovary Syndrome (PCOS) affects 8–13% of women of reproductive age worldwide, yet up to 70% remain undiagnosed and often face diagnostic delays of 2+ years. Patients juggle fragmented symptoms—irregular cycles, metabolic swings, fatigue, hyperandrogenism—while clinical visits are compressed into brief consultations.
+Polycystic Ovary Syndrome (PMOS) affects 8–13% of women of reproductive age worldwide, yet up to 70% remain undiagnosed and often face diagnostic delays of 2+ years. Patients juggle fragmented symptoms—irregular cycles, metabolic swings, fatigue, hyperandrogenism—while clinical visits are compressed into brief consultations.
 
 **PHASE** provides an intelligent, private space to track daily health markers, discover personal patterns through clinical phenotypes, and receive medically grounded AI interpretations powered by the **Databricks Data Intelligence Platform**, backed by a continuous human-in-the-loop expert clinical review system.
 
@@ -35,7 +35,7 @@ Databricks serves as the central data intelligence, storage, and clinical AI bac
 * **Endpoint:** `${DATABRICKS_HOST}/api/2.0/vector-search/indexes/${DATABRICKS_VECTOR_INDEX}/query`
 * **Index:** `pcos.vector_search.disease_symptoms_v2_vs_index` (or `health_lakehouse.pcos_research.curated_literature_index`)
 * **What it does:**
-  * Performs hybrid vector search across indexed peer-reviewed clinical literature (including the ESHRE/ASRM international PCOS consensus guidelines, *The Lancet Diabetes & Endocrinology*, and *The American Journal of Clinical Nutrition*).
+  * Performs hybrid vector search across indexed peer-reviewed clinical literature (including the ESHRE/ASRM international PMOS consensus guidelines, *The Lancet Diabetes & Endocrinology*, and *The American Journal of Clinical Nutrition*).
   * Answers patient and clinician questions with verifiable sources, attaching exact study titles, publishers, DOIs, and excerpts to each interpretation.
   * Powers the real-time symptom and medical literature search bar in the user interface ([`components/SymptomSearch.tsx`](file:///Users/mikethedoge/Documents/Projects/BadgerBuildFest2026/components/SymptomSearch.tsx)).
 
@@ -102,12 +102,12 @@ Rather than relying on static model weights or requiring slow, expensive offline
   2. *Questions for Your Clinician:* 1–3 high-yield questions for the patient's next appointment.
 - **Curated Literature Citations:** Cites peer-reviewed medical journals retrieved via Databricks Vector Search.
 
-### 3. PCOS Phenotype Discovery Quiz (`/quiz`)
-- Multi-step clinical assessment mapping reported symptoms to established PCOS phenotypes:
-  - *Insulin-Resistant PCOS*
-  - *Inflammatory PCOS*
-  - *Adrenal PCOS*
-  - *Post-Pill PCOS*
+### 3. PMOS Phenotype Discovery Quiz (`/quiz`)
+- Multi-step clinical assessment mapping reported symptoms to established PMOS phenotypes:
+  - *Insulin-Resistant PMOS*
+  - *Inflammatory PMOS*
+  - *Adrenal PMOS*
+  - *Post-Pill PMOS*
 - Delivers evidence-informed nutrition, exercise, supplement, and lab testing considerations tailored to each phenotype.
 
 ### 4. Insights & Clinician Visit Summary (`/insights`)
@@ -133,7 +133,7 @@ Rather than relying on static model weights or requiring slow, expensive offline
       │       Serving        │       │        Search        │       │      Warehouse       │
       ├──────────────────────┤       ├──────────────────────┤       ├──────────────────────┤
       │ Llama 3.3 70B        │       │ Unity Catalog Index  │       │ Delta Lake Tables:   │
-      │ Instruct             │       │ Peer-reviewed PCOS   │       │ • user_health_records│
+      │ Instruct             │       │ Peer-reviewed PMOS   │       │ • user_health_records│
       │ Context grounding    │       │ clinical literature  │       │ • expert_reviews     │
       │ Few-shot RLHF prompts│       │ Hybrid vector query  │       │   (RLHF gold data)   │
       └──────────────────────┘       └──────────────────────┘       └──────────────────────┘
@@ -169,7 +169,7 @@ Rather than relying on static model weights or requiring slow, expensive offline
   - Serverless SQL Warehouse (`DATABRICKS_SQL_WAREHOUSE_ID`)
 - **Clerk Account** (Required for user authentication & account-scoped logs)
 
-> **Note on Offline Development:** The codebase includes built-in offline fallback drivers and an in-memory knowledge base (`CURATED_PCOS_LITERATURE`). Setting `DATABRICKS_MOCK=true` or omitting credentials enables an offline sandbox mode so UI features can still be developed locally without an active cloud connection.
+> **Note on Offline Development:** The codebase includes built-in offline fallback drivers and an in-memory knowledge base (`CURATED_PMOS_LITERATURE`). Setting `DATABRICKS_MOCK=true` or omitting credentials enables an offline sandbox mode so UI features can still be developed locally without an active cloud connection.
 
 ### 1. Clone & Install Dependencies
 

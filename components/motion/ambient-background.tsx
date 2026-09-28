@@ -47,7 +47,7 @@ export function AmbientBackground({
         aria-hidden="true"
       >
         <div
-          className="absolute -top-[20%] -right-[15%] w-[450px] h-[450px] rounded-full filter blur-[70px]"
+          className="absolute -top-[20%] -right-[15%] w-[450px] h-[450px] rounded-full filter blur-[20px]"
           style={{ background: "radial-gradient(circle, #c8dfdb 0%, transparent 70%)" }}
         />
       </div>
@@ -59,18 +59,21 @@ export function AmbientBackground({
       className={`absolute inset-0 pointer-events-none overflow-hidden select-none z-0 ${className}`}
       aria-hidden="true"
     >
-      {/* Slow Shifting Gradient Mesh (18s duration) */}
+      {/* Slow Shifting Gradient Mesh with GPU-accelerated transforms */}
       <motion.div
-        className="absolute -top-[20%] -right-[10%] w-[550px] h-[550px] rounded-full filter blur-[90px] opacity-45 pointer-events-none"
+        className="absolute -top-[20%] -right-[10%] w-[550px] h-[550px] rounded-full opacity-45 pointer-events-none"
         style={{
           background:
             "radial-gradient(circle, rgba(200, 223, 219, 0.85) 0%, rgba(102, 163, 191, 0.4) 50%, transparent 75%)",
+          filter: "blur(20px)",
+          willChange: "transform",
+          transform: "translate3d(0,0,0)",
+          backfaceVisibility: "hidden",
         }}
         animate={{
-          scale: [1, 1.15, 0.95, 1],
+          scale: [1, 1.12, 0.96, 1],
           x: [0, 25, -20, 0],
           y: [0, -35, 15, 0],
-          opacity: [0.35, 0.5, 0.4, 0.35],
         }}
         transition={{
           duration: 18,
@@ -80,16 +83,19 @@ export function AmbientBackground({
       />
 
       <motion.div
-        className="absolute -bottom-[25%] -left-[10%] w-[480px] h-[480px] rounded-full filter blur-[80px] opacity-35 pointer-events-none"
+        className="absolute -bottom-[25%] -left-[10%] w-[480px] h-[480px] rounded-full opacity-35 pointer-events-none"
         style={{
           background:
             "radial-gradient(circle, rgba(102, 163, 191, 0.5) 0%, rgba(51, 104, 160, 0.25) 50%, transparent 75%)",
+          filter: "blur(20px)",
+          willChange: "transform",
+          transform: "translate3d(0,0,0)",
+          backfaceVisibility: "hidden",
         }}
         animate={{
-          scale: [1, 0.9, 1.12, 1],
+          scale: [1, 0.92, 1.1, 1],
           x: [0, -25, 20, 0],
           y: [0, 25, -15, 0],
-          opacity: [0.25, 0.45, 0.3, 0.25],
         }}
         transition={{
           duration: 22,
@@ -98,7 +104,7 @@ export function AmbientBackground({
         }}
       />
 
-      {/* Ambient Floating Particles (12s - 20s individual gentle drift) */}
+      {/* Ambient Floating Particles */}
       {particles.map((p) => (
         <motion.div
           key={p.id}
@@ -112,12 +118,12 @@ export function AmbientBackground({
               p.id % 2 === 0
                 ? "rgba(102, 163, 191, 0.35)"
                 : "rgba(36, 101, 99, 0.25)",
-            filter: "blur(1px)",
+            willChange: "transform",
+            transform: "translate3d(0,0,0)",
           }}
           animate={{
             y: [0, -28, 12, 0],
             x: [0, 14, -14, 0],
-            opacity: [0.2, 0.65, 0.3, 0.2],
           }}
           transition={{
             duration: p.duration,
@@ -134,7 +140,7 @@ export function AmbientBackground({
 /**
  * GlobalAmbientFlow: Full-viewport, fixed background that gives every page
  * an organic, tranquil, swimmy aquatic atmosphere while keeping the text
- * crisp and contrast high.
+ * crisp and contrast high. GPU-isolated to prevent compositor flickering.
  */
 export function GlobalAmbientFlow() {
   const shouldReduceMotion = useReducedMotion();
@@ -143,22 +149,25 @@ export function GlobalAmbientFlow() {
 
   return (
     <div
-      className="fixed inset-0 pointer-events-none overflow-hidden select-none z-[-1]"
+      className="fixed inset-0 pointer-events-none overflow-hidden select-none -z-10"
       aria-hidden="true"
-      style={{ zIndex: 0 }}
+      style={{ zIndex: -1 }}
     >
       {/* Upper-right tranquil water swell */}
       <motion.div
-        className="absolute -top-[15%] right-[-10%] w-[680px] h-[680px] rounded-full filter blur-[120px] pointer-events-none"
+        className="absolute -top-[15%] right-[-10%] w-[680px] h-[680px] rounded-full pointer-events-none"
         style={{
           background:
-            "radial-gradient(circle, rgba(200, 223, 219, 0.45) 0%, rgba(102, 163, 191, 0.22) 50%, transparent 75%)",
+            "radial-gradient(circle, rgba(200, 223, 219, 0.5) 0%, rgba(102, 163, 191, 0.22) 50%, transparent 75%)",
+          filter: "blur(24px)",
+          willChange: "transform",
+          transform: "translate3d(0,0,0)",
+          backfaceVisibility: "hidden",
         }}
         animate={{
           x: [0, 45, -35, 0],
           y: [0, -50, 30, 0],
-          scale: [1, 1.14, 0.94, 1],
-          opacity: [0.35, 0.55, 0.4, 0.35],
+          scale: [1, 1.1, 0.95, 1],
         }}
         transition={{
           duration: 26,
@@ -169,16 +178,19 @@ export function GlobalAmbientFlow() {
 
       {/* Lower-left deep calm ocean current */}
       <motion.div
-        className="absolute bottom-[-15%] -left-[10%] w-[720px] h-[720px] rounded-full filter blur-[130px] pointer-events-none"
+        className="absolute bottom-[-15%] -left-[10%] w-[720px] h-[720px] rounded-full pointer-events-none"
         style={{
           background:
-            "radial-gradient(circle, rgba(102, 163, 191, 0.32) 0%, rgba(36, 101, 99, 0.16) 55%, transparent 80%)",
+            "radial-gradient(circle, rgba(102, 163, 191, 0.35) 0%, rgba(36, 101, 99, 0.16) 55%, transparent 80%)",
+          filter: "blur(24px)",
+          willChange: "transform",
+          transform: "translate3d(0,0,0)",
+          backfaceVisibility: "hidden",
         }}
         animate={{
           x: [0, -40, 35, 0],
           y: [0, 40, -30, 0],
-          scale: [1, 0.92, 1.12, 1],
-          opacity: [0.3, 0.5, 0.35, 0.3],
+          scale: [1, 0.94, 1.08, 1],
         }}
         transition={{
           duration: 32,
@@ -189,16 +201,19 @@ export function GlobalAmbientFlow() {
 
       {/* Mid-screen floating luminous tide */}
       <motion.div
-        className="absolute top-[35%] left-[25%] w-[500px] h-[500px] rounded-full filter blur-[140px] pointer-events-none"
+        className="absolute top-[35%] left-[25%] w-[500px] h-[500px] rounded-full pointer-events-none"
         style={{
           background:
-            "radial-gradient(circle, rgba(215, 236, 232, 0.35) 0%, rgba(102, 163, 191, 0.14) 60%, transparent 80%)",
+            "radial-gradient(circle, rgba(215, 236, 232, 0.4) 0%, rgba(102, 163, 191, 0.14) 60%, transparent 80%)",
+          filter: "blur(24px)",
+          willChange: "transform",
+          transform: "translate3d(0,0,0)",
+          backfaceVisibility: "hidden",
         }}
         animate={{
           x: [0, 60, -40, 0],
           y: [0, -40, 50, 0],
-          scale: [0.95, 1.15, 0.95],
-          opacity: [0.25, 0.45, 0.25],
+          scale: [0.96, 1.1, 0.96],
         }}
         transition={{
           duration: 28,
